@@ -189,16 +189,18 @@ const loginUser = async (req, res) => {
         phone: checkUser.phone,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "60m" }
+      { expiresIn: "30d" }
     );
 
     res
       .cookie("token", token, {
         httpOnly: true, //to prevent cross site scripting attacks
-        secure: false, //set to true if using https in production
+        secure: true, //set to true if using https in production
         // secure : process.env.NODE_ENV === "production", //set to true if using https in production
         // sameSite : "strict", //to prevent cross site request forgery attacks
         // maxAge : 60 * 60 * 1000 //1 hour
+        sameSite: "strict", // or "lax" if needed
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       })
       .json({
         success: true,
