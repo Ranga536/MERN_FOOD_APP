@@ -8,12 +8,13 @@ import {
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import { Separator } from "@radix-ui/react-select";
-import { Leaf, Drumstick, Building2 } from "lucide-react";
+import { Leaf, Drumstick, Building2, Layers } from "lucide-react";
 
 // Mapping for filters
 const categoryIcons = {
-  category: <Leaf size={16} className="text-green-600" />, // Veg/non-veg
+  category: <Layers size={16} className="text-green-600" />, // Veg/non-veg
   type: <Building2 size={16} className="text-purple-600" />, // Cafe/hotel/bakery
+  isVeg: <Leaf size={16} className="text-green-600" />, // Veg/non-veg
 };
 
 const ProductFilter = ({ filters, handleFilter, filterOptions }) => {

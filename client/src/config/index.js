@@ -221,40 +221,10 @@ export const shoppingViewHeaderMenuItems = [
     label: "Restaurants",
     path: "/shop/listing",
   },
-  {
-    id: "contact",
-    label: "Contact",
-    path: "/shop/listing",
-  },
   // {
-  //   id: "men",
-  //   label: "Men",
+  //   id: "contact",
+  //   label: "Contact",
   //   path: "/shop/listing",
-  // },
-  // {
-  //   id: "women",
-  //   label: "Women",
-  //   path: "/shop/listing",
-  // },
-  // {
-  //   id: "kids",
-  //   label: "Kids",
-  //   path: "/shop/listing",
-  // },
-  // {
-  //   id: "footwear",
-  //   label: "Footwear",
-  //   path: "/shop/listing",
-  // },
-  // {
-  //   id: "accessories",
-  //   label: "Accessories",
-  //   path: "/shop/listing",
-  // },
-  // {
-  //   id: "search",
-  //   label: "Search",
-  //   path: "/shop/search",
   // },
 ];
 
@@ -280,19 +250,11 @@ export const filterOptions = {
     { id: "veg", label: "Veg" },
     { id: "non-veg", label: "Non-Veg" },
     { id: "both", label: "Both" },
-    // { id: "accessories", label: "Accessories" },
-    // { id: "footwear", label: "Footwear" },
   ],
   type: [
     { id: "cafe", label: "Cafe" },
     { id: "hotel", label: "Hotel" },
     { id: "bakery", label: "Bakery" },
-    // { id: "nike", label: "Nike" },
-    // { id: "adidas", label: "Adidas" },
-    // { id: "puma", label: "Puma" },
-    // { id: "levi", label: "Levi's" },
-    // { id: "zara", label: "Zara" },
-    // { id: "h&m", label: "H&M" },
   ],
 };
 
@@ -300,8 +262,6 @@ export const menuFilterOptions = {
   isVeg: [
     { id: "true", label: "Veg" },
     { id: "false", label: "Non-Veg" },
-    // { id: "accessories", label: "Accessories" },
-    // { id: "footwear", label: "Footwear" },
   ],
   category: [
     { id: "tiffin", label: "Tiffins" },

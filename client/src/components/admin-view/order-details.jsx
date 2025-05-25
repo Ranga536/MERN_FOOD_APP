@@ -42,7 +42,7 @@ const AdminOrderDetailsView = ({ orderDetails }) => {
   };
 
   return (
-    <DialogContent className="sm:max-w-[600px]">
+    <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto p-6">
       <div className="grid gap-6">
         <div className="grid gap-2">
           <div className="flex mt-6 items-center justify-between">
@@ -86,10 +86,8 @@ const AdminOrderDetailsView = ({ orderDetails }) => {
             <ul className="grid gap-4">
               {orderDetails?.cartItems && orderDetails?.cartItems.length > 0
                 ? orderDetails?.cartItems.map((item) => (
-                    // className="flex items-center justify-between" - to horizontally align the items
                     <li
                       key={item.menuItemId}
-                      // className="border p-4 rounded-lg shadow grid gap-1"
                       className="flex items-center justify-between"
                     >
                       <span>Item : {item.name}</span>
@@ -126,7 +124,7 @@ const AdminOrderDetailsView = ({ orderDetails }) => {
                 options: [
                   { id: "pending", label: "Pending" },
                   { id: "inProcess", label: "In Process" },
-                  { id: "outForDelivery", label: "Out Fr Delivery" },
+                  { id: "outForDelivery", label: "Out For Delivery" },
                   { id: "delivered", label: "Delivered" },
                   { id: "rejected", label: "Rejected" },
                 ],
