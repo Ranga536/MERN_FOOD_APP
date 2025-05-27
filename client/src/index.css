@@ -5,6 +5,13 @@
 
 @import "tw-animate-css"; */
 
+img {
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

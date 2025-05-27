@@ -149,9 +149,17 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = true;
+        // state.isAuthenticated = true;
         // state.user = action.payload;
-        state.user = null;
+        // state.user = null;
+        if (action.payload?.success) {
+          state.isAuthenticated = true;
+          state.user = action.payload.user || null;
+        } else {
+          // ❌ registration failed
+          state.isAuthenticated = false;
+          state.user = null;
+        }
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -193,33 +201,33 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
         state.message = null;
-        state.isAuthenticated = false
+        state.isAuthenticated = false;
       })
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
         state.message = action.payload;
-        state.isAuthenticated = false
+        state.isAuthenticated = false;
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.isAuthenticated = false
+        state.isAuthenticated = false;
       })
       .addCase(resetPassword.pending, (state) => {
         state.loading = true;
         state.error = null;
         state.message = null;
-        state.isAuthenticated = false
+        state.isAuthenticated = false;
       })
       .addCase(resetPassword.fulfilled, (state, action) => {
         state.loading = false;
         state.message = action.payload;
-        state.isAuthenticated = false
+        state.isAuthenticated = false;
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.isAuthenticated = false
+        state.isAuthenticated = false;
       });
   },
 });

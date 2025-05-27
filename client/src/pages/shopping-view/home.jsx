@@ -148,11 +148,12 @@ const ShoppingHome = () => {
       </div>
 
       {/* Categories Section */}
-      <section className="py-8 sm:py-12 bg-gradient-to-br from-[#ff43e9] via-[#06eaff] to-[#ff22e5] ">
+      <section className="py-8 sm:py-12 bg-gradient-to-br from-[#ff43e9] via-[#06fffb] to-[#ff22e5] ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 text-grey-700">
             Order Your Favorite Food!!
           </h2>
+          
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {categoriesWithIcon.map((item) => (
               <Card
@@ -160,11 +161,11 @@ const ShoppingHome = () => {
                 key={item.id}
                 className="cursor-pointer hover:shadow-lg transition-shadow"
               >
-                <CardContent className="flex flex-col items-center justify-center p-4 sm:p-6">
+                <CardContent className="flex flex-col items-center justify-center p-0 sm:p-3">
                   {/* <item.icon className="w-10 h-10 sm:w-12 sm:h-12 mb-3 text-primary" /> */}
                   <img
                     src={item.image}
-                    className="w-20 h-20 sm:w-12 sm:h-12  md:w-20 md:h-20 mb-3 text-primary rounded-full hover:scale-110 hover:shadow-lg transform-content transition-shadow"
+                    className="w-18 h-18 shadow-lg sm:w-12 sm:h-12  md:w-20 md:h-20 mb-3 text-primary rounded-full hover:scale-110 hover:shadow-lg transform-content transition-shadow"
                   />
                   <span className="text-sm sm:text-base font-semibold">
                     {item.label}

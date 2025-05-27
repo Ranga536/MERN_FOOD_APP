@@ -26,7 +26,7 @@ const ShoppingProductTile = ({ product }) => {
           <img
             src={product?.image}
             alt={product?.name}
-            className="w-full h-[200px] object-cover"
+            className="w-full h-[160px] object-cover"
           />
           {!product?.isOpen && (
             <Badge className="absolute top-2 left-2 bg-red-600 text-white">
@@ -40,7 +40,7 @@ const ShoppingProductTile = ({ product }) => {
         </div>
 
         {/* Content Section */}
-        <CardContent className="pb-4 px-4 pt-2">
+        <CardContent className="pb-3 px-4 pt-0">
           {/* Restaurant Name and Rating */}
           <div className="flex justify-between items-start">
             <h2 className="text-lg font-semibold text-gray-800 truncate max-w-[70%]">

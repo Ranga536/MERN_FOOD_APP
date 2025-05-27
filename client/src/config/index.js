@@ -228,22 +228,6 @@ export const shoppingViewHeaderMenuItems = [
   // },
 ];
 
-export const categoryOptionsMap = {
-  men: "Men",
-  women: "Women",
-  kids: "Kids",
-  accessories: "Accessories",
-  footwear: "Footwear",
-};
-
-export const brandOptionsMap = {
-  nike: "Nike",
-  adidas: "Adidas",
-  puma: "Puma",
-  levi: "Levi",
-  zara: "Zara",
-  "h&m": "H&M",
-};
 
 export const filterOptions = {
   category: [
@@ -251,11 +235,11 @@ export const filterOptions = {
     { id: "non-veg", label: "Non-Veg" },
     { id: "both", label: "Both" },
   ],
-  type: [
-    { id: "cafe", label: "Cafe" },
-    { id: "hotel", label: "Hotel" },
-    { id: "bakery", label: "Bakery" },
-  ],
+  // type: [
+  //   { id: "cafe", label: "Cafe" },
+  //   { id: "hotel", label: "Hotel" },
+  //   { id: "bakery", label: "Bakery" },
+  // ],
 };
 
 export const menuFilterOptions = {
@@ -306,7 +290,7 @@ export const addressFormControls = [
     placeholder: "Enter your phone number",
   },
   {
-    label: "Notes",
+    label: "Any Preparation Tips",
     name: "notes",
     componentType: "textarea",
     placeholder: "Enter any additional notes",

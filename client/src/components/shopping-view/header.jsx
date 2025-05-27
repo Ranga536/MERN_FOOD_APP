@@ -94,7 +94,7 @@ const HeaderRightContent = ({ setOpenSheet }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           side="right"
-          className="w-72 rounded-2xl border border-white/20 shadow-xl bg-gradient-to-br from-pink-100 via-white to-yellow-100 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-800 p-4 backdrop-blur-md animate-in fade-in slide-in-from-top-2"
+          className="w-38 rounded-2xl border border-white/20 shadow-xl bg-gradient-to-br from-pink-100 via-white to-yellow-100 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-800 p-4 backdrop-blur-md animate-in fade-in slide-in-from-top-2"
         >
           {/* Avatar & Name */}
           <div className="flex items-center gap-3 mb-4 px-2">

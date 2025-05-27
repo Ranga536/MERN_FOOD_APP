@@ -29,7 +29,7 @@ import PrivacyAndPolicy from "./pages/auth/privacy-policy";
 import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
 import { Loader2, Loader2Icon } from "lucide-react";
-import LogoImg from "./assets/Delbite Logo.jpg"
+
 
 function App() {
   //check if user is authenticated or not
@@ -46,22 +46,14 @@ function App() {
   if (isLoading)
     return (
       // <Skeleton className="w-[1000px] h-[1000px] rounded-xl bg-gray-500" />
-  //     <div className="flex items-center justify-center h-screen bg-white">
-  //   <Loader2Icon className="w-10 h-10 animate-spin text-primary" />
-  // </div>
-
-    <div className="flex items-center justify-center h-screen bg-white">
-    <img
-      src={LogoImg} // <-- replace with your logo path
-      alt="Loading..."
-      className="w-16 h-16 animate-spin"
-    />
+      <div className="flex items-center justify-center h-screen bg-white">
+    <Loader2Icon className="w-10 h-10 animate-spin text-primary" />
   </div>
  
     );
 
   return (
-    <div className="flex flex-col overflow-hidden bg-white">
+    <div className="flex flex-col overflow-hidden bg-white select-none">
       {/*common components  */}
       {/* <h1>Header Component</h1> */}
       <Routes>

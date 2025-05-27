@@ -9,20 +9,21 @@ const ShoppingAccount = () => {
     //previous background styling - className="flex flex-col min-h-screen bg-gradient-to-br from-indigo-100 via-white to-pink-100"
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 via-40% to-yellow-100">
       {/* Header Section with Image */}
-      <div className="relative h-[300px] w-full overflow-hidden shadow-md">
+      <div className="relative h-[200px] w-full overflow-hidden shadow-md">
         <img
           src={checkoutImage}
           alt="Checkout"
           // className="h-full w-full object-cover object-center brightness-90"
           className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000"
         />
-
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center"></div>
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+        <h1 className="text-white font-bold italic text-4xl">Account</h1>
+        </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="container mx-auto px-4 md:px-8 py-10">
-        <div className="rounded-3xl border border-gray-200 bg-white/90 backdrop-blur-md p-6 md:p-10 shadow-2xl transition-all hover:shadow-[0_10px_25px_rgba(0,0,0,0.15)]">
+      <div className="container mx-auto px-2 md:px-4 py-8">
+        <div className="rounded-3xl border border-gray-200 bg-white/90 backdrop-blur-md p-4 md:p-10 shadow-2xl transition-all hover:shadow-[0_10px_25px_rgba(0,0,0,0.15)]">
           <Tabs defaultValue="orders">
             {/* Tab Buttons */}
             <TabsList className="flex gap-4 justify-center mb-8 bg-slate-100 p-4 rounded-xl shadow-inner">

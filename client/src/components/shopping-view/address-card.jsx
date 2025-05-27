@@ -39,7 +39,7 @@ const AddressCard = ({
           📞 Phone: <span className="font-normal">{addressInfo?.phone}</span>
         </Label>
         <Label className="font-medium">
-          📝 Notes:{" "}
+          📝 Tip Notes:{" "}
           <span className="font-normal">{addressInfo?.notes || "None"}</span>
         </Label>
       </CardContent>

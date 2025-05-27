@@ -81,14 +81,14 @@ const FooterInfo = () => {
       <div className="bg-gray-800">
         <div className="container mx-auto py-4 px-5 flex flex-col sm:flex-row justify-center sm:justify-between items-center">
           <p className="text-gray-400 text-sm text-center sm:text-left">
-            © 2025 Delbite —{" "}
-            <a
+            © 2025 Delbite {" "}
+            {/* <a
               href="#"
               rel="noopener noreferrer"
               className="text-gray-300 hover:text-white font-medium ml-1"
             >
               @developer
-            </a>
+            </a> */}
           </p>
         </div>
       </div>
