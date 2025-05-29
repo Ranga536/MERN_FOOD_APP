@@ -29,6 +29,7 @@ import PrivacyAndPolicy from "./pages/auth/privacy-policy";
 import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
 import { Loader2, Loader2Icon } from "lucide-react";
+import ContactPage from "./pages/shopping-view/contact";
 
 
 function App() {
@@ -111,6 +112,7 @@ function App() {
           <Route path="home" element={<ShoppingHome />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="order-success" element={<OrderSuccessPage />} />
+          <Route path="contact" element={<ContactPage />} />
           <Route path="search" element={<SearchFoodItems />} />
         </Route>
         <Route path="/unauth-page" element={<UnauthPage />} />

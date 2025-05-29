@@ -221,11 +221,11 @@ export const shoppingViewHeaderMenuItems = [
     label: "Restaurants",
     path: "/shop/listing",
   },
-  // {
-  //   id: "contact",
-  //   label: "Contact",
-  //   path: "/shop/listing",
-  // },
+  {
+    id: "contact",
+    label: "Contact",
+    path: "/shop/contact",
+  },
 ];
 
 
