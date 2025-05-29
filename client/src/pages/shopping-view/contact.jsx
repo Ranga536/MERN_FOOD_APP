@@ -8,8 +8,8 @@ import FooterInfo from "@/components/shopping-view/footer";
 const ContactPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#06041b] via-[#2d1c66] to-[#000000] py-20 px-4 md:px-24 text-white">
-      <div className="backdrop-blur-sm bg-white/5 rounded-3xl p-10 max-w-6xl mx-auto shadow-xl border border-white/10">
-        <div className="text-center mb-14">
+      <div className="backdrop-blur-sm bg-white/5 rounded-3xl p-10 max-w-6xl mx-auto shadow-xl border border-white/10 mb-10">
+        <div className="text-center mb-14 mt-14">
           <h1 className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
             Connect With Us
           </h1>
@@ -32,7 +32,7 @@ const ContactPage = () => {
               <Phone className="text-yellow-400 w-10 h-10" />
               <h3 className="text-2xl font-bold">Phone</h3>
               <p className="text-gray-300">+91-95158 36496</p>
-              <p className="text-sm text-gray-400">9:00 AM – 9:00 PM</p>
+              <p className="text-sm text-gray-400">7:00 AM – 9:00 PM</p>
             </CardContent>
           </Card>
 
