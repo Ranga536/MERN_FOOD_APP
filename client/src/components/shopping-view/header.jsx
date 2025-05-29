@@ -1,3 +1,4 @@
+
 import {
   CircleUser,
   LogOut,
@@ -45,8 +46,6 @@ const MenuItems = ({ setOpenSheet }) => {
 
 const HeaderRightContent = ({ setOpenSheet }) => {
   const { user } = useSelector((state) => state.auth);
-  const { cartItems } = useSelector((state) => state.shopCart);
-  const [openCartSheet, setOpenCartSheet] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -55,35 +54,8 @@ const HeaderRightContent = ({ setOpenSheet }) => {
     setOpenSheet?.(false);
   };
 
-  useEffect(() => {
-    dispatch(fetchCartItems(user?.id));
-  }, [dispatch]);
-
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4 items-center">
-      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
-        <Button
-          onClick={() => setOpenCartSheet(true)}
-          variant="outline"
-          size="icon"
-          className="relative"
-        >
-          <ShoppingCart className="w-6 h-6 cursor-pointer" />
-          <span className="absolute top-[-5px] right-[2px] font-bold text-sm  rounded-full">
-            {cartItems?.items?.length || 0}
-          </span>
-          <span className="sr-only">user cart</span>
-        </Button>
-        <UserCartWrapper
-          setOpenCartSheet={setOpenCartSheet}
-          cartItems={
-            cartItems?.items && cartItems.items.length > 0
-              ? cartItems.items
-              : []
-          }
-        />
-      </Sheet>
-
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-black text-white font-extrabold">
@@ -96,7 +68,6 @@ const HeaderRightContent = ({ setOpenSheet }) => {
           side="right"
           className="w-38 rounded-2xl border border-white/20 shadow-xl bg-gradient-to-br from-pink-100 via-white to-yellow-100 dark:from-zinc-800 dark:via-zinc-900 dark:to-zinc-800 p-4 backdrop-blur-md animate-in fade-in slide-in-from-top-2"
         >
-          {/* Avatar & Name */}
           <div className="flex items-center gap-3 mb-4 px-2">
             <img
               src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.userName}`}
@@ -114,7 +85,6 @@ const HeaderRightContent = ({ setOpenSheet }) => {
             </div>
           </div>
 
-          {/* Account */}
           <DropdownMenuItem
             onClick={() => {
               navigate("/shop/account");
@@ -128,7 +98,6 @@ const HeaderRightContent = ({ setOpenSheet }) => {
             </span>
           </DropdownMenuItem>
 
-          {/* Logout */}
           <DropdownMenuItem
             onClick={handleLogout}
             className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-200/70 dark:hover:bg-red-600/30 text-red-600 dark:text-red-400 font-semibold transition-all duration-300 group mt-2"
@@ -146,12 +115,18 @@ const HeaderRightContent = ({ setOpenSheet }) => {
 
 const ShoppingHeader = () => {
   const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.shopCart);
   const [openSheet, setOpenSheet] = useState(false);
+  const [openCartSheet, setOpenCartSheet] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCartItems(user?.id));
+  }, [dispatch, user?.id]);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        {/* Left: Logo */}
         <div className="flex items-center">
           <Link to="/shop/home" className="flex items-center gap-2">
             <img src={delbiteLogo} className="h-10 w-10" alt="Delbite Logo" />
@@ -159,21 +134,45 @@ const ShoppingHeader = () => {
           </Link>
         </div>
 
-        {/* Center: Menu Items (hidden on small screens) */}
         <div className="hidden lg:flex flex-1 justify-center">
           <MenuItems />
         </div>
 
-        {/* Right: Icons */}
         <div className="flex items-center gap-4">
-          {/* SearchIcon visible on all screens */}
-          <div className="cursor-pointer p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition">
-            <Link to="/shop/search">
+          {/* Mobile Icons (Search + Cart) */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <Link
+              to="/shop/search"
+              className="cursor-pointer p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition"
+            >
               <SearchIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </Link>
+
+            <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
+              <Button
+                onClick={() => setOpenCartSheet(true)}
+                variant="outline"
+                size="icon"
+                className="relative"
+              >
+                <ShoppingCart className="w-6 h-6 cursor-pointer" />
+                <span className="absolute top-[-5px] right-[2px] font-bold text-sm rounded-full">
+                  {cartItems?.items?.length || 0}
+                </span>
+                <span className="sr-only">user cart</span>
+              </Button>
+              <UserCartWrapper
+                setOpenCartSheet={setOpenCartSheet}
+                cartItems={
+                  cartItems?.items && cartItems.items.length > 0
+                    ? cartItems.items
+                    : []
+                }
+              />
+            </Sheet>
           </div>
 
-          {/* Mobile menu icon (hidden on lg and up) */}
+          {/* Mobile Sheet for Menu (no cart inside) */}
           <div className="lg:hidden">
             <Sheet open={openSheet} onOpenChange={setOpenSheet}>
               <SheetTrigger asChild>
@@ -184,13 +183,36 @@ const ShoppingHeader = () => {
               </SheetTrigger>
               <SheetContent side="left" className="w-full max-w-xs">
                 <MenuItems setOpenSheet={setOpenSheet} />
+                {/* Removed Cart Icon from here */}
                 <HeaderRightContent setOpenSheet={setOpenSheet} />
               </SheetContent>
             </Sheet>
           </div>
 
-          {/* Right content (hidden on small screens) */}
-          <div className="hidden lg:flex">
+          {/* Desktop Right Content (Cart + Avatar) */}
+          <div className="hidden lg:flex items-center gap-4">
+            <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
+              <Button
+                onClick={() => setOpenCartSheet(true)}
+                variant="outline"
+                size="icon"
+                className="relative"
+              >
+                <ShoppingCart className="w-6 h-6 cursor-pointer" />
+                <span className="absolute top-[-5px] right-[2px] font-bold text-sm rounded-full">
+                  {cartItems?.items?.length || 0}
+                </span>
+                <span className="sr-only">user cart</span>
+              </Button>
+              <UserCartWrapper
+                setOpenCartSheet={setOpenCartSheet}
+                cartItems={
+                  cartItems?.items && cartItems.items.length > 0
+                    ? cartItems.items
+                    : []
+                }
+              />
+            </Sheet>
             <HeaderRightContent />
           </div>
         </div>
