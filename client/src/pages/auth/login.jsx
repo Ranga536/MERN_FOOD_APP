@@ -31,7 +31,7 @@ const AuthLogin = () => {
 
   return (
     //previous background color className="min-h-screen w-full flex items-center justify-center bg-[linear-gradient(to_bottom_right,_#ffe4e6,_#fff1f3,_#fbcfe8)] px-4"
-    <div className="min-h-screen w-full flex items-center justify-center bg-[linear-gradient(135deg,_#c3ecf7,_#f5c6ec,_#fdd9b5,_#b5ead7,_#c9c9ff)] bg-no-repeat bg-cover px-4 font-['Inter'] transition-all duration-500">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-tr from-pink-300 via-purple-200 to-cyan-400 text-yellow-600  bg-no-repeat bg-cover px-4 font-['Inter'] transition-all duration-500">
       <div className="w-full max-w-md backdrop-blur-xl bg-white/80 border border-white/40 shadow-xl rounded-2xl p-8 animate-fade-in-up">
         {/* Header */}
         <div className="text-center mb-6">

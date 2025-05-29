@@ -117,6 +117,69 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
+
+    // <div className="flex flex-col overflow-hidden bg-white select-none">
+    //   <Routes>
+    //     {/* Root route - redirect based on auth and role */}
+    //     <Route path="/" element={<CheckAuth />} />
+
+    //     {/* Auth routes */}
+    //     <Route
+    //       path="/auth"
+    //       element={
+    //         <CheckAuth>
+    //           <AuthLayout />
+    //         </CheckAuth>
+    //       }
+    //     >
+    //       <Route path="login" element={<AuthLogin />} />
+    //       <Route path="register" element={<AuthRegister />} />
+    //       <Route path="verify-otp" element={<VerifyOtp />} />
+    //       <Route path="terms-conditions" element={<TermsAndConditions />} />
+    //       <Route path="privacy-policy" element={<PrivacyAndPolicy />} />
+    //       <Route path="forgot-password" element={<ForgotPassword />} />
+    //       <Route path="reset-password/:token" element={<ResetPassword />} />
+    //     </Route>
+
+    //     {/* Admin routes */}
+    //     <Route
+    //       path="/admin"
+    //       element={
+    //         <CheckAuth>
+    //           <AdminLayout />
+    //         </CheckAuth>
+    //       }
+    //     >
+    //       <Route path="dashboard" element={<AdminDashboard />} />
+    //       <Route path="features" element={<AdminFeatures />} />
+    //       <Route path="orders" element={<AdminOrders />} />
+    //       <Route path="restaurants" element={<AdminRestaurants />} />
+    //       <Route path="restaurants/:id" element={<AdminMenuItems />} />
+    //     </Route>
+
+    //     {/* Shop routes */}
+    //     <Route
+    //       path="/shop"
+    //       element={
+    //         <CheckAuth>
+    //           <ShoppingLayout />
+    //         </CheckAuth>
+    //       }
+    //     >
+    //       <Route path="account" element={<ShoppingAccount />} />
+    //       <Route path="listing" element={<ShoppingListing />} />
+    //       <Route path="listing/:id" element={<UserMenuItems />} />
+    //       <Route path="home" element={<ShoppingHome />} />
+    //       <Route path="checkout" element={<ShoppingCheckout />} />
+    //       <Route path="order-success" element={<OrderSuccessPage />} />
+    //       <Route path="search" element={<SearchFoodItems />} />
+    //     </Route>
+
+    //     {/* Unauthorized and NotFound pages */}
+    //     <Route path="/unauth-page" element={<UnauthPage />} />
+    //     <Route path="*" element={<NotFound />} />
+    //   </Routes>
+    // </div>
   );
 }
 

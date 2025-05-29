@@ -39,6 +39,7 @@ const UserCartItemsContent = ({ cartItem }) => {
     });
   };
 
+
   return (
     <div className="flex items-center space-x-4 p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 font-poppins">
       <img

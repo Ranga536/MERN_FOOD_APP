@@ -193,12 +193,18 @@ const updateCartItems = async (req, res) => {
     // Populate updated items for response
     await cart.populate({
       path: "items.menuItemId",
-      select: "image name originalPrice offerPrice restaurantId",
+      // select: "image name originalPrice offerPrice restaurantId restaurantName",
+        populate: {
+    path: "restaurantId",
+    model: "Restaurant",
+    select: "name", // assuming 'name' is the restaurant name field
+  },
     });
 
     const updatedItems = cart.items.map((item) => ({
       menuItemId: item.menuItemId?._id,
       restaurantId: item.menuItemId?.restaurantId,
+      restaurantName: item.menuItemId?.restaurantId?.name,
       image: item.menuItemId?.image,
       name: item.menuItemId?.name || "Product not found",
       originalPrice: item.menuItemId?.originalPrice,
@@ -262,12 +268,18 @@ const deleteCartItems = async (req, res) => {
     // Populate only after saving
     await cart.populate({
       path: "items.menuItemId",
-      select: "image name originalPrice offerPrice restaurantId",
+      // select: "image name originalPrice offerPrice restaurantId",
+       populate: {
+    path: "restaurantId",
+    model: "Restaurant",
+    select: "name", // assuming 'name' is the restaurant name field
+  },
     });
 
     const populatedItems = cart.items.map((item) => ({
       menuItemId: item.menuItemId?._id,
       restaurantId: item.menuItemId?.restaurantId,
+      restaurantName: item.menuItemId?.restaurantId?.name,
       image: item.menuItemId?.image,
       name: item.menuItemId?.name || "Product not found",
       originalPrice: item.menuItemId?.originalPrice,
