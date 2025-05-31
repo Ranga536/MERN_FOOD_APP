@@ -1,7 +1,7 @@
 // utils/sendEmail.js
 const nodemailer = require("nodemailer");
 
-const sendEmail = async (to, subject, text) => {
+const sendEmail = async (to, subject,html) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -14,7 +14,7 @@ const sendEmail = async (to, subject, text) => {
     from: `"Delbite Team" <${process.env.ADMIN_EMAIL}>`,
     to,
     subject,
-    text,
+    html,
   };
 
   await transporter.sendMail(mailOptions);

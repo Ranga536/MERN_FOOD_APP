@@ -221,10 +221,10 @@ const deleteCartAfterOrderSuccess = async (req, res) => {
               .join("")}
           </ul>
         </div>
-
+        
         <p style="color: #555; font-size: 14px;">🕒 Order Date: ${new Date(
           order.orderDate
-        ).toLocaleString()}</p>
+        ).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
       </div>
     `;
 
