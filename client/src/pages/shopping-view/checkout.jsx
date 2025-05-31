@@ -16,6 +16,7 @@ const ShoppingCheckout = () => {
   const { user } = useSelector((state) => state.auth);
   const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
+  const [isButtonClicked, setIsBtnClicked] = useState(false)
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -44,6 +45,8 @@ const ShoppingCheckout = () => {
       toast.error("Please select an address!");
       return;
     }
+
+    setIsBtnClicked(true)
 
     const orderData = {
       userId: user.id,
@@ -181,7 +184,7 @@ const ShoppingCheckout = () => {
   {/* Place Order Button */}
   <button
     onClick={handleInitiatePayment}
-    disabled={isOrderPlaced}
+    // disabled={isOrderPlaced}
     className={`w-full py-4 rounded-3xl font-semibold text-white
       bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500
       shadow-md shadow-pink-400/50
@@ -200,6 +203,9 @@ const ShoppingCheckout = () => {
       </>
     )}
   </button>
+  {
+    isButtonClicked ? <p className="text-center text-green-500">Your Order is Processing!...</p> : null
+  }
 </div>
 
         </div>

@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { fetchCartItems } from "@/store/restaurants/cart-slice";
 import { successPlacedOrder } from "@/store/restaurants/order-slice";
 import { CheckCircle } from "lucide-react";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const OrderSuccessPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const orderId = JSON.parse(sessionStorage.getItem("currentOrderId"));
@@ -16,6 +18,7 @@ const OrderSuccessPage = () => {
     dispatch(successPlacedOrder({ orderId })).then((data) => {
       if (data?.payload?.success) {
         sessionStorage.removeItem("currentOrderId");
+        dispatch(fetchCartItems(user?.id))
       }
     });
   }, []);

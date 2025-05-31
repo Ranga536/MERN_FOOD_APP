@@ -3,8 +3,16 @@ import checkoutImage from "../../assets/checkout-banner.png";
 import Address from "@/components/shopping-view/address";
 import ShoppingOrders from "@/components/shopping-view/orders";
 import FooterInfo from "@/components/shopping-view/footer";
+import { useEffect } from "react";
 
 const ShoppingAccount = () => {
+   useEffect(() => {
+    // Prevent infinite reload
+    if (!window.location.hash.includes("reloaded")) {
+      window.location.hash = "reloaded";
+      window.location.reload();
+    }
+  }, []);
   return (
     //previous background styling - className="flex flex-col min-h-screen bg-gradient-to-br from-indigo-100 via-white to-pink-100"
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 via-40% to-yellow-100">
