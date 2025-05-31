@@ -63,6 +63,11 @@ const AddressCard = ({
         >
           🗑️ Delete
         </Button>
+        <Label className="font-medium">
+          <span className="font-normal text-gray-600 italic text-center">
+            *click to select this address
+          </span>
+        </Label>
       </CardFooter>
     </Card>
   );

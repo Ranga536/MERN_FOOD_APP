@@ -176,6 +176,7 @@ export const addMenuItemElements = [
       { id: "drink", label: "Cool Drinks" },
       { id: "fastFood", label: "Fast Foods" },
       { id: "bakeryItem", label: "Bakery Item" },
+      { id: "starter", label: "Starters" },
     ],
   },
   {
@@ -226,6 +227,11 @@ export const shoppingViewHeaderMenuItems = [
     label: "Contact",
     path: "/shop/contact",
   },
+  // {
+  //   id: "account",
+  //   label: "My Account",
+  //   path: "/shop/account",
+  // },
 ];
 
 
@@ -252,7 +258,8 @@ export const menuFilterOptions = {
     { id: "meal", label: "Meals" },
     { id: "drink", label: "Cool Drinks" },
     { id: "fastFood", label: "Fast Foods" },
-    { id: "bakeryItem", label: "Bakery Item" }
+    { id: "bakeryItem", label: "Bakery Item" },
+    { id: "starter", label: "Starters" },
   ],
 };
 export const sortOptions = [

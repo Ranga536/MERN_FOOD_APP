@@ -1,4 +1,3 @@
-
 import {
   CircleUser,
   LogOut,
@@ -34,6 +33,7 @@ const MenuItems = ({ setOpenSheet }) => {
           key={menuItem.id}
           to={menuItem.path}
           onClick={() => setOpenSheet?.(false)}
+          // className="relative text-sm font-semibold transition duration-300 ease-in-out text-white bg-gradient-to-r from-pink-500 to-red-500 px-4 py-2 rounded-xl shadow-md hover:scale-105"
           className="relative text-sm font-semibold text-gray-800 transition duration-300 ease-in-out hover:text-white hover:bg-gradient-to-r hover:from-pink-500 hover:to-red-500 px-4 py-2 rounded-xl shadow-md hover:scale-105"
         >
           {menuItem.label}
@@ -140,7 +140,7 @@ const ShoppingHeader = () => {
 
         <div className="flex items-center gap-4">
           {/* Mobile Icons (Search + Cart) */}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-2 ">
             <Link
               to="/shop/search"
               className="cursor-pointer p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition"
@@ -153,7 +153,7 @@ const ShoppingHeader = () => {
                 onClick={() => setOpenCartSheet(true)}
                 variant="outline"
                 size="icon"
-                className="relative"
+                className="relative lg:hidden"
               >
                 <ShoppingCart className="w-6 h-6 cursor-pointer" />
                 <span className="absolute top-[-5px] right-[2px] font-bold text-sm rounded-full">
