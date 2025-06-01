@@ -30,6 +30,7 @@ import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
 import { Loader2, Loader2Icon } from "lucide-react";
 import ContactPage from "./pages/shopping-view/contact";
+import gifImg from "./assets/deliverybike-giphy.gif"
 
 
 function App() {
@@ -47,10 +48,24 @@ function App() {
   if (isLoading)
     return (
       // <Skeleton className="w-[1000px] h-[1000px] rounded-xl bg-gray-500" />
-      <div className="flex items-center justify-center h-screen bg-white">
-    <Loader2Icon className="w-10 h-10 animate-spin text-primary" />
-  </div>
- 
+  //     <div className="flex items-center justify-center h-screen bg-white">
+  //   <Loader2Icon className="w-10 h-10 animate-spin text-primary" />
+  // </div>
+
+<div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-white via-blue-100 to-purple-200 text-center px-4">
+  {/* <div className="bg-white shadow-xl w-60 p-6 rounded-2xl border border-gray-200 animate-fade-in"> */}
+    <img
+      src="https://cdn.dribbble.com/userupload/25651927/file/original-6501e52c3e9c850da0cf82d96845b15d.gif"
+      alt="Loading..."
+      className="w-64 max-w-md h-auto mx-auto rounded-xl"
+    />
+    <p className="mt-6 text-xl text-gray-700 font-semibold animate-pulse">
+      Loading, please wait...
+    </p>
+    {/* <p className="text-sm text-gray-500 mt-2">Fetching delicious experiences just for you 🍽️</p> */}
+  {/* </div> */}
+</div>
+
     );
 
   return (
