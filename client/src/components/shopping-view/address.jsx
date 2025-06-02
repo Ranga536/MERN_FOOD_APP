@@ -136,7 +136,7 @@ const Address = ({ setCurrentSelectedAddress, selectedId }) => {
     //   </CardContent>
     // </Card>
     <Card className="bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100 p-6 rounded-3xl shadow-2xl border border-purple-200">
-  <div className="mb-6 p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div className="mb-6 p-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
     {addressList && addressList.length > 0 ? (
       addressList.map((singleAddressItem) => (
         <AddressCard

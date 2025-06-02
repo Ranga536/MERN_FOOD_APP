@@ -8,19 +8,21 @@ import { createNewOrder } from "@/store/restaurants/order-slice";
 import { useNavigate } from "react-router-dom";
 import { toast} from "sonner";
 import FooterInfo from "@/components/shopping-view/footer";
-import { HandCoins } from "lucide-react";
-
+import {
+  HandCoins,
+  Info,
+} from "lucide-react";
 
 const ShoppingCheckout = () => {
   const { cartItems } = useSelector((state) => state.shopCart);
   const { user } = useSelector((state) => state.auth);
   const [currentSelectedAddress, setCurrentSelectedAddress] = useState(null);
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
-  const [isButtonClicked, setIsBtnClicked] = useState(false)
+  const [isButtonClicked, setIsBtnClicked] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const deliveryCharge = 35;
+  const deliveryCharge = 25;
 
   const totalItemAmount =
     cartItems && cartItems.items && cartItems.items.length > 0
@@ -46,7 +48,7 @@ const ShoppingCheckout = () => {
       return;
     }
 
-    setIsBtnClicked(true)
+    setIsBtnClicked(true);
 
     const orderData = {
       userId: user.id,
@@ -100,7 +102,7 @@ const ShoppingCheckout = () => {
           alt="Checkout image"
         />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 p-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-5 p-5 bg-gradient-to-r from-pink-200 via-gray-200 to-blue-200">
         <Address
           selectedId={currentSelectedAddress}
           setCurrentSelectedAddress={setCurrentSelectedAddress}
@@ -147,67 +149,74 @@ const ShoppingCheckout = () => {
             </Button>
           </div> */}
 
-          <div className="mt-10 max-w-md mx-auto px-6 py-6 bg-white rounded-2xl shadow-lg">
-  {/* Items Total */}
-  <div className="flex justify-between items-center mb-4">
-    <span className="flex items-center gap-2 text-gray-700 font-medium text-base sm:text-lg">
-      🧺 Items Total
-    </span>
-    <span className="font-semibold text-gray-900 text-base sm:text-lg">
-      {totalItemAmount} ₹
-    </span>
-  </div>
+          <div className="mt-10 max-w-md mx-auto px-6 py-6 bg-white rounded-2xl shadow-xl">
+            {/* Items Total */}
+            <div className="flex justify-between items-center mb-4">
+              <span className="flex items-center gap-2 text-gray-700 font-medium text-base sm:text-lg">
+                🧺 Items Total
+              </span>
+              <span className="font-semibold text-gray-900 text-base sm:text-lg">
+                {totalItemAmount} ₹
+              </span>
+            </div>
 
-  {/* Delivery Charges */}
-  <div className="flex justify-between items-center mb-6">
-    <span className="flex items-center gap-2 text-gray-700 font-medium text-base sm:text-lg">
-      🚚 Delivery Charges
-    </span>
-    <span className="font-semibold text-gray-900 text-base sm:text-lg">
-      {deliveryCharge} ₹
-    </span>
-  </div>
+            {/* Delivery Charges */}
+            <div className="flex justify-between items-center mb-6">
+              <span className="flex items-center gap-2 text-gray-700 font-medium text-base sm:text-lg">
+                🚚 Delivery Charges
+              </span>
+              <span className="font-semibold text-gray-900 text-base sm:text-lg">
+                {deliveryCharge} ₹
+              </span>
+            </div>
 
-  {/* Separator */}
-  <hr className="border-dashed border-gray-300 mb-6" />
+            {/* Separator */}
+            <hr className="border-dashed border-gray-300 mb-6" />
 
-  {/* Total Amount */}
-  <div className="flex justify-between items-center mb-8">
-    <span className="flex items-center gap-3 m-3 text-indigo-600 font-extrabold text-xl sm:text-2xl">
-      💰 Total Amount - 
-    </span>
-    <span className="font-extrabold text-indigo-800 text-xl sm:text-2xl">
-      {totalCartAmount} ₹
-    </span>
-  </div>
+            {/* Total Amount */}
+            <div className="flex justify-between items-center mb-8">
+              <span className="flex items-center gap-3 m-3 text-indigo-600 font-extrabold text-xl sm:text-2xl">
+                💰 Total Amount -
+              </span>
+              <span className="font-extrabold text-indigo-800 text-xl sm:text-2xl">
+                {totalCartAmount} ₹
+              </span>
+            </div>
 
-  {/* Place Order Button */}
-  <button
-    onClick={handleInitiatePayment}
-    // disabled={isOrderPlaced}
-    className={`w-full py-4 rounded-3xl font-semibold text-white
+            {/* disclaimer */}
+            <div className="flex items-start gap-3 bg-green-50 border-l-4 border-green-400 p-4 rounded-xl shadow-md max-w-xl mx-auto my-6">
+              <Info className="w-8 h-8 text-green-600 mt-1" />
+              <div>
+                <h2 className="text-green-800 font-semibold text-sm">
+                  Please review your order before placing. Help us reduce food waste and avoid cancellations
+                </h2>
+              </div>
+            </div>
+
+            {/* Place Order Button */}
+            <button
+              onClick={handleInitiatePayment}
+              // disabled={isOrderPlaced}
+              className={`w-full py-4 rounded-3xl font-semibold text-white
       bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500
       shadow-md shadow-pink-400/50
       transition-transform duration-300 ease-in-out
       hover:scale-105 hover:shadow-lg hover:shadow-pink-500/70
       focus:outline-none focus:ring-4 focus:ring-pink-300
       disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3`}
-  >
-    {isOrderPlaced ? (
-      <>
-        ⏳ Processing Order...
-      </>
-    ) : (
-      <>
-        ✅ Place Order
-      </>
-    )}
-  </button>
-  {
-    isButtonClicked ? <p className="text-center text-green-500">Your Order is Processing!...</p> : null
-  }
-</div>
-
+            >
+              {isOrderPlaced ? (
+                <>⏳ Processing Order...</>
+              ) : (
+                <>✅ Place Order</>
+              )}
+            </button>
+            {isButtonClicked ? (
+              <p className="text-center text-green-500">
+                Your Order is Processing!...
+              </p>
+            ) : null}
+          </div>
         </div>
       </div>
       <FooterInfo />

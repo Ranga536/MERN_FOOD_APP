@@ -5,7 +5,7 @@ import UserCartItemsContent from "./cart-items-content";
 
 const UserCartWrapper = ({ cartItems, setOpenCartSheet }) => {
   const navigate = useNavigate();
-  const deliveryCharge = 35;
+  const deliveryCharge = 25;
 
   const totalItemAmount =
     cartItems && cartItems.length > 0
