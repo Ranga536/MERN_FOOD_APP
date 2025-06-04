@@ -93,7 +93,7 @@ const AdminOrderDetailsView = ({ orderDetails }) => {
                       <span>Item : {item.name}</span>
                       <span>Quantity : {item.quantity}</span>
                       <span>Item Price : ₹{item.offerPrice}</span>
-                      <span>Delivery Charges : ₹35</span>
+                      <span>Delivery Charges : ₹25</span>
                       <span>Restaurant : {item.restaurantName}</span>
                     </li>
                   ))

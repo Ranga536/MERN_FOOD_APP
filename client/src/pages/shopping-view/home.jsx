@@ -187,7 +187,7 @@ import { Button } from "@/components/ui/button";
 import bannerOne from "../../assets/banner-1.webp";
 import bannerTwo from "../../assets/banner-2.webp";
 import bannerThree from "../../assets/banner-3.webp";
-import { Phone, MessageCircle, Truck, Gift, Bike, Home } from "lucide-react"; // Add these at top
+import { Phone, MessageCircle, Truck, Gift, Bike, Home, Utensils } from "lucide-react"; // Add these at top
 import {
   Carrot,
   ChevronLeftIcon,
@@ -204,6 +204,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getFeatureImages } from "@/store/common-slice";
 import FooterInfo from "@/components/shopping-view/footer";
 import { motion } from "framer-motion";
+import rcbOfferImg from "../../assets/rcb-offer.jpeg"
 
 const ShoppingHome = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -338,6 +339,64 @@ const ShoppingHome = () => {
            <h2 className="text-3xl font-bold text-center mb-10 text-white drop-shadow-lg">
             Currently Available in Gooty 
           </h2>
+
+<img 
+src={rcbOfferImg}
+className="w-75 h-auto max-w-2xl mx-auto rounded-lg shadow-lg mb-5"
+/>
+
+   <div className="w-full flex justify-center items-center mt-12 mb-10 px-4">
+      <Button
+        onClick={() => navigate("/shop/listing")}
+        className="relative px-8 py-4 text-lg font-semibold text-white rounded-full 
+          bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 
+          shadow-2xl hover:shadow-[0_10px_30px_rgba(0,0,0,0.25)] hover:scale-105 
+          transition-transform duration-300 ease-in-out flex items-center gap-3 overflow-hidden"
+      >
+        {/* Glowing Pulse Border Layer */}
+        <span className="absolute inset-0 border-2 border-white/20 rounded-full animate-pulse blur-[2px] z-0" />
+
+        {/* Icon + Text */}
+        <Utensils className="w-5 h-5 z-10 animate-wiggle" />
+        <span className="relative z-10">Click To Explore Restaurants</span>
+      </Button>
+    </div>
+
+
+          <h2 className="text-3xl font-bold text-center mb-10 text-white drop-shadow-lg">
+            Order Your Favorite Food!!
+          </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
+          >
+            {categoriesWithIcon.map((item) => (
+              <motion.div
+                key={item.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Card
+                  onClick={() => handleNavigateToSearchPage(item.label)}
+                  className="p-0 cursor-pointer bg-white/90 backdrop-blur-md rounded-xl shadow-xl hover:shadow-2xl transition-all"
+                >
+                  <CardContent className="flex flex-col items-center justify-center p-4">
+                    <img
+                      src={item.image}
+                      className="w-18 h-18 md:w-20 md:h-20 mb-2 rounded-full border-2 border-white shadow-md"
+                      alt={item.label}
+                    />
+                    <span className="text-base font-semibold text-gray-800">
+                      {item.label}
+                    </span>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
           {/* Contact Info */}
           <div className="mt-10 mb-10 flex flex-col items-center text-white text-center bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 py-10 px-6 rounded-2xl shadow-2xl max-w-3xl mx-auto">
             <h3 className="text-2xl font-bold mb-4 tracking-wide drop-shadow-md">
@@ -376,40 +435,6 @@ const ShoppingHome = () => {
               </div>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-center mb-10 text-white drop-shadow-lg">
-            Order Your Favorite Food!!
-          </h2>
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
-          >
-            {categoriesWithIcon.map((item) => (
-              <motion.div
-                key={item.id}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Card
-                  onClick={() => handleNavigateToSearchPage(item.label)}
-                  className="p-0 cursor-pointer bg-white/90 backdrop-blur-md rounded-xl shadow-xl hover:shadow-2xl transition-all"
-                >
-                  <CardContent className="flex flex-col items-center justify-center p-4">
-                    <img
-                      src={item.image}
-                      className="w-18 h-18 md:w-20 md:h-20 mb-2 rounded-full border-2 border-white shadow-md"
-                      alt={item.label}
-                    />
-                    <span className="text-base font-semibold text-gray-800">
-                      {item.label}
-                    </span>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
         </div>
       </section>
 
