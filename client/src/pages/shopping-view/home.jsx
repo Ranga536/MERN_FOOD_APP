@@ -340,10 +340,10 @@ const ShoppingHome = () => {
             Currently Available in Gooty 
           </h2>
 
-<img 
+{/* <img 
 src={rcbOfferImg}
 className="w-75 h-auto max-w-2xl mx-auto rounded-lg shadow-lg mb-5"
-/>
+/> */}
 
    <div className="w-full flex justify-center items-center mt-12 mb-10 px-4">
       <Button

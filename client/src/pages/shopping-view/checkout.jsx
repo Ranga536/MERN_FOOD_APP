@@ -22,8 +22,8 @@ const ShoppingCheckout = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const rcbCupOffer = 25;
-  const deliveryCharge = 25;
+  // const rcbCupOffer = 25;
+  const deliveryCharge = 30;
 
   const totalItemAmount =
     cartItems && cartItems.items && cartItems.items.length > 0
@@ -35,7 +35,7 @@ const ShoppingCheckout = () => {
       : 0;
   const totalCartAmount =
     cartItems && cartItems.items && cartItems.items.length > 0
-      ? totalItemAmount + deliveryCharge - rcbCupOffer
+      ? totalItemAmount + deliveryCharge 
       : 0;
 
   const handleInitiatePayment = () => {
@@ -172,14 +172,14 @@ const ShoppingCheckout = () => {
             </div>
 
             {/* RCB CUP OFFER - FREE DELIVERY */}
-            <div className="flex justify-between items-center mb-6">
+            {/* <div className="flex justify-between items-center mb-6">
               <span className="flex items-center gap-2 text-gray-700 font-medium text-base sm:text-lg">
               🎉  Celebrate with RCB
               </span>
               <span className="font-semibold text-red-400 text-base sm:text-lg">
                 -{rcbCupOffer} ₹
               </span>
-            </div>
+            </div> */}
 
             {/* Separator */}
             <hr className="border-dashed border-gray-300 mb-6" />

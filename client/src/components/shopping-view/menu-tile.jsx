@@ -2,7 +2,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter } from "../ui/card";
 
-const UserMenuItemTile = ({ product, handleAddToCart }) => {
+const UserMenuItemTile = ({ product, handleAddToCart, isRestaurantOpen }) => {
   return (
     <Card className="flex flex-row md:flex-col w-full max-w-sm mx-auto rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-200 border border-gray-100 bg-white p-0">
       {/* Image Section */}
@@ -14,7 +14,7 @@ const UserMenuItemTile = ({ product, handleAddToCart }) => {
         />
 
         {/* Not Available Badge */}
-        {product?.isAvailable !== true && (
+        {(product?.isAvailable !== true || !isRestaurantOpen) && (
           <Badge className="absolute top-2 left-2 bg-red-600 text-white text-[10px] px-2 py-[2px] rounded shadow">
             Not Available
           </Badge>
@@ -70,7 +70,7 @@ const UserMenuItemTile = ({ product, handleAddToCart }) => {
         <CardFooter className="px-0 pt-2">
           <Button
             onClick={() => handleAddToCart(product?._id)}
-            disabled={product?.isAvailable !== true}
+            disabled={product?.isAvailable !== true || !isRestaurantOpen}
             className={`w-full py-1.5 text-sm rounded-md font-medium transition-all ${
               product?.isAvailable !== true
                 ? "bg-gray-300 text-gray-600 cursor-not-allowed"

@@ -30,7 +30,7 @@ import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
 import { Loader2, Loader2Icon } from "lucide-react";
 import ContactPage from "./pages/shopping-view/contact";
-import gifImg from "./assets/deliverybike-giphy.gif"
+// import gifImg from "./assets/deliverybike-giphy.gif"
 
 
 function App() {

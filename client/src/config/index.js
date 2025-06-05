@@ -119,6 +119,15 @@ export const addProductFormElements = [
     componentType: "input",
     placeholder: "Enter Restaurant Delivery Time",
   },
+  {
+    label: "Is Open",
+    name: "isOpen",
+    componentType: "select",
+    options: [
+      { id: "true", label: "Yes" },
+      { id: "false", label: "No" },
+    ],
+  },
     {
     label: "Rating",
     name: "rating",
