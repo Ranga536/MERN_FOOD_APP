@@ -14,7 +14,7 @@ const UserMenuItemTile = ({ product, handleAddToCart, isRestaurantOpen }) => {
         />
 
         {/* Not Available Badge */}
-        {(product?.isAvailable !== true || !isRestaurantOpen) && (
+        {product?.isAvailable !== true && (
           <Badge className="absolute top-2 left-2 bg-red-600 text-white text-[10px] px-2 py-[2px] rounded shadow">
             Not Available
           </Badge>
@@ -70,7 +70,7 @@ const UserMenuItemTile = ({ product, handleAddToCart, isRestaurantOpen }) => {
         <CardFooter className="px-0 pt-2">
           <Button
             onClick={() => handleAddToCart(product?._id)}
-            disabled={product?.isAvailable !== true || !isRestaurantOpen}
+            disabled={product?.isAvailable !== true}
             className={`w-full py-1.5 text-sm rounded-md font-medium transition-all ${
               product?.isAvailable !== true
                 ? "bg-gray-300 text-gray-600 cursor-not-allowed"
