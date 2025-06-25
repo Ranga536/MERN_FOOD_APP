@@ -117,7 +117,7 @@ const ShoppingListing = () => {
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 20000,
         maximumAge: 0,
       }
     );
@@ -226,7 +226,7 @@ const ShoppingListing = () => {
                 onClick={handleGetLocation}
                 className="mt-3 bg-blue-600 text-white hover:bg-blue-700"
               >
-                📍 Try Again – Enable Location Access
+                📍 Try Again 
               </Button>
             </div>
           ) : userLocation && (

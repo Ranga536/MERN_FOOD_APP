@@ -23,11 +23,16 @@ const SearchFoodItems = () => {
 
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
+  const [isLocationLoading, setIsLocationLoading] = useState(true);
 
-  // ✅ Try to get stored location or request once
+  // ✅ Get location (with retry support)
   const handleGetLocation = () => {
+    setIsLocationLoading(true);
+    setLocationError(null);
+
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
+      setLocationError("Geolocation is not supported by your browser.");
+      setIsLocationLoading(false);
       return;
     }
 
@@ -39,40 +44,40 @@ const SearchFoodItems = () => {
         };
         sessionStorage.setItem("userLocation", JSON.stringify(locationObj));
         setUserLocation(locationObj);
-        setLocationError(null);
+        setIsLocationLoading(false);
       },
       (error) => {
+        console.error("Location error:", error);
         if (error.code === 1) {
           setLocationError("Location permission denied. Enable it in browser settings.");
         } else {
           setLocationError("Unable to fetch location. Try again.");
         }
-        console.log("Error fetching location:", error);
+        setIsLocationLoading(false);
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 20000,
         maximumAge: 0,
       }
     );
   };
 
-  // ✅ On first mount: load from session or request
+  // ✅ On mount: load from session or fetch
   useEffect(() => {
-    const storedLocation = sessionStorage.getItem("userLocation");
-
-    if (storedLocation) {
-      const parsed = JSON.parse(storedLocation);
+    const stored = sessionStorage.getItem("userLocation");
+    if (stored) {
+      const parsed = JSON.parse(stored);
       if (parsed.latitude && parsed.longitude) {
         setUserLocation(parsed);
+        setIsLocationLoading(false);
         return;
       }
     }
-
     handleGetLocation();
   }, []);
 
-  // ✅ Perform search when keyword and location are available
+  // ✅ Trigger search only when keyword and location are available
   useEffect(() => {
     if (
       keywordFromURL &&
@@ -124,52 +129,240 @@ const SearchFoodItems = () => {
         </div>
       </div>
 
-      {/* 🔴 Location Error with Retry Button */}
-      {locationError && (
+      {/* ✅ Spinner while location is loading */}
+      {isLocationLoading && (
+        <div className="text-center text-blue-600 font-semibold mb-4 animate-pulse">
+          📍 Detecting your location...
+        </div>
+      )}
+
+      {/* 🔴 Show error with retry button */}
+      {!isLocationLoading && locationError && (
         <div className="text-center text-red-600 font-semibold mb-4">
           <p>{locationError}</p>
           <Button
             onClick={handleGetLocation}
             className="mt-2 bg-blue-600 text-white hover:bg-blue-700"
           >
-            📍 Please Allow Location Access
+            📍 Try Again – Enable Location Access
           </Button>
         </div>
       )}
 
-      {/* ✅ Location debug info */}
-      {userLocation && (
+      {/* ✅ Show current location */}
+      {!isLocationLoading && userLocation && (
         <div className="text-sm text-green-700 text-center mb-4">
           📍 Using Location: {userLocation.latitude}, {userLocation.longitude}
         </div>
       )}
 
-      <div className="mt-4">
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : keyword.trim().length === 0 ? (
-          <p className="text-center text-gray-500 text-lg">
-            Search your favorite food!
-          </p>
-        ) : searchResults.length === 0 ? (
-          <p className="text-center text-gray-500 text-lg">No Items Found.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {searchResults.map((item) => (
-              <UserMenuItemTile
-                key={item._id}
-                product={item}
-                handleAddToCart={handleAddToCart}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      {/* ✅ Results Area */}
+      {!isLocationLoading && (
+        <div className="mt-4">
+          {isLoading ? (
+            <p className="text-center text-blue-600 font-medium">Loading Results...</p>
+          ) : keyword.trim().length === 0 ? (
+            <p className="text-center text-gray-500 text-lg">
+              Search your favorite food!
+            </p>
+          ) : searchResults.length === 0 ? (
+            <p className="text-center text-gray-500 text-lg">No Items Found.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {searchResults.map((item) => (
+                <UserMenuItemTile
+                  key={item._id}
+                  product={item}
+                  handleAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 export default SearchFoodItems;
+
+
+
+
+
+
+// import UserMenuItemTile from "@/components/shopping-view/menu-tile";
+// import { Input } from "@/components/ui/input";
+// import { addToCart, fetchCartItems } from "@/store/restaurants/cart-slice";
+// import {
+//   getSearchResults,
+//   resetSearchResults,
+// } from "@/store/restaurants/search-slice";
+// import { useEffect, useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useSearchParams } from "react-router-dom";
+// import { toast } from "sonner";
+// import { Button } from "@/components/ui/button";
+
+// const SearchFoodItems = () => {
+//   const [keyword, setKeyword] = useState("");
+//   const [searchParams, setSearchParams] = useSearchParams();
+//   const keywordFromURL = searchParams.get("keyword") || "";
+
+//   const dispatch = useDispatch();
+//   const { searchResults, isLoading } = useSelector((state) => state.shopSearch);
+//   const { cartItems } = useSelector((state) => state.shopCart);
+//   const { user } = useSelector((state) => state.auth);
+
+//   const [userLocation, setUserLocation] = useState(null);
+//   const [locationError, setLocationError] = useState(null);
+
+//   // ✅ Try to get stored location or request once
+//   const handleGetLocation = () => {
+//     if (!navigator.geolocation) {
+//       alert("Geolocation is not supported by your browser.");
+//       return;
+//     }
+
+//     navigator.geolocation.getCurrentPosition(
+//       (position) => {
+//         const locationObj = {
+//           latitude: position.coords.latitude,
+//           longitude: position.coords.longitude,
+//         };
+//         sessionStorage.setItem("userLocation", JSON.stringify(locationObj));
+//         setUserLocation(locationObj);
+//         setLocationError(null);
+//       },
+//       (error) => {
+//         if (error.code === 1) {
+//           setLocationError("Location permission denied. Enable it in browser settings.");
+//         } else {
+//           setLocationError("Unable to fetch location. Try again.");
+//         }
+//         console.log("Error fetching location:", error);
+//       },
+//       {
+//         enableHighAccuracy: true,
+//         timeout: 10000,
+//         maximumAge: 0,
+//       }
+//     );
+//   };
+
+//   // ✅ On first mount: load from session or request
+//   useEffect(() => {
+//     const storedLocation = sessionStorage.getItem("userLocation");
+
+//     if (storedLocation) {
+//       const parsed = JSON.parse(storedLocation);
+//       if (parsed.latitude && parsed.longitude) {
+//         setUserLocation(parsed);
+//         return;
+//       }
+//     }
+
+//     handleGetLocation();
+//   }, []);
+
+//   // ✅ Perform search when keyword and location are available
+//   useEffect(() => {
+//     if (
+//       keywordFromURL &&
+//       keywordFromURL.trim().length > 3 &&
+//       userLocation &&
+//       typeof userLocation.latitude === "number" &&
+//       typeof userLocation.longitude === "number"
+//     ) {
+//       dispatch(
+//         getSearchResults({
+//           keyword: keywordFromURL,
+//           latitude: userLocation.latitude,
+//           longitude: userLocation.longitude,
+//         })
+//       );
+//       setKeyword(keywordFromURL);
+//     } else {
+//       dispatch(resetSearchResults());
+//     }
+//   }, [keywordFromURL, userLocation]);
+
+//   const handleAddToCart = (menuId) => {
+//     dispatch(addToCart({ userId: user?.id, menuItemId: menuId, quantity: 1 }))
+//       .unwrap()
+//       .then((data) => {
+//         toast.success(data.message);
+//         dispatch(fetchCartItems(user?.id));
+//       })
+//       .catch((error) => {
+//         toast.error(error?.message || "Something went wrong");
+//       });
+//   };
+
+//   return (
+//     <div className="container mx-auto md:px-6 px-4 py-8">
+//       <div className="flex justify-center mb-8">
+//         <div className="w-full flex items-center">
+//           <Input
+//             value={keyword}
+//             name="keyword"
+//             onChange={(event) => {
+//               const newKeyword = event.target.value;
+//               setKeyword(newKeyword);
+//               setSearchParams(new URLSearchParams({ keyword: newKeyword }));
+//             }}
+//             className="py-6"
+//             placeholder="Search Food Items..."
+//           />
+//         </div>
+//       </div>
+
+//       {/* 🔴 Location Error with Retry Button */}
+//       {locationError && (
+//         <div className="text-center text-red-600 font-semibold mb-4">
+//           <p>{locationError}</p>
+//           <Button
+//             onClick={handleGetLocation}
+//             className="mt-2 bg-blue-600 text-white hover:bg-blue-700"
+//           >
+//             📍 Please Allow Location Access
+//           </Button>
+//         </div>
+//       )}
+
+//       {/* ✅ Location debug info */}
+//       {userLocation && (
+//         <div className="text-sm text-green-700 text-center mb-4">
+//           📍 Using Location: {userLocation.latitude}, {userLocation.longitude}
+//         </div>
+//       )}
+
+//       <div className="mt-4">
+//         {isLoading ? (
+//           <p>Loading...</p>
+//         ) : keyword.trim().length === 0 ? (
+//           <p className="text-center text-gray-500 text-lg">
+//             Search your favorite food!
+//           </p>
+//         ) : searchResults.length === 0 ? (
+//           <p className="text-center text-gray-500 text-lg">No Items Found.</p>
+//         ) : (
+//           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+//             {searchResults.map((item) => (
+//               <UserMenuItemTile
+//                 key={item._id}
+//                 product={item}
+//                 handleAddToCart={handleAddToCart}
+//               />
+//             ))}
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default SearchFoodItems;
 
 
 
