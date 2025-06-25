@@ -20,7 +20,7 @@ const searchFoodItems = async (req, res) => {
       });
     }
 
-    const maxDistanceMeters = 10000; // 10 km
+    const maxDistanceMeters = 50000; // 10 km
 
     // Step 1: Get nearby restaurant IDs
     const nearbyRestaurants = await Restaurant.find({

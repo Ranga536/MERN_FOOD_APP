@@ -38,7 +38,7 @@ const getFilteredRestaurants = async (req, res) => {
     }
 
     // MongoDB geo query for nearby restaurants within 10km radius (adjust distance as needed)
-    const maxDistanceMeters = 10000; // 10km
+    const maxDistanceMeters = 50000; // 10km
 
     const restaurants = await Restaurant.find({
       ...filters,
