@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import { fetchAllFilteredRestaurants } from "@/store/restaurants/restaurant-slice";
 import ProductFilter from "@/components/shopping-view/filter";
-import { filterOptions, sortOptions } from "@/config";
-import ShoppingProductTile from "@/components/shopping-view/product-tile";
 import FooterInfo from "@/components/shopping-view/footer";
+import ShoppingProductTile from "@/components/shopping-view/product-tile";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,120 +12,89 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { fetchAllFilteredRestaurants } from "@/store/restaurants/restaurant-slice";
+import { filterOptions, sortOptions } from "@/config";
 import { ArrowUpDownIcon } from "lucide-react";
-
-// Haversine distance calculation
-function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
-
   for (const [key, value] of Object.entries(filterParams)) {
     if (Array.isArray(value) && value.length > 0) {
-      queryParams.push(`${key}=${encodeURIComponent(value.join(","))}`);
+      const paramValue = value.join(",");
+      queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
     }
   }
-
   return queryParams.join("&");
 }
 
 const ShoppingListing = () => {
   const dispatch = useDispatch();
-  const { restaurantList, isLoading } = useSelector(
-    (state) => state.shopRestaurants
-  );
-
+  const { restaurantList, isLoading } = useSelector((state) => state.shopRestaurants);
   const [filters, setFilters] = useState({});
-  const [sort, setSort] = useState(null);
+  const [sort, setSort] = useState("price-lowtohigh");
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
-  const lastLocationRef = useRef(null);
+  const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
 
   const handleSort = (value) => setSort(value);
 
-  const handleFilter = (sectionId, currentOption) => {
-    const newFilters = { ...filters };
-    const options = newFilters[sectionId] || [];
+  const handleFilter = (getSectionId, getCurrentOption) => {
+    let cpyFilters = { ...filters };
+    const index = Object.keys(cpyFilters).indexOf(getSectionId);
 
-    if (options.includes(currentOption)) {
-      newFilters[sectionId] = options.filter((opt) => opt !== currentOption);
+    if (index === -1) {
+      cpyFilters[getSectionId] = [getCurrentOption];
     } else {
-      newFilters[sectionId] = [...options, currentOption];
+      const optionIndex = cpyFilters[getSectionId].indexOf(getCurrentOption);
+      if (optionIndex === -1) cpyFilters[getSectionId].push(getCurrentOption);
+      else cpyFilters[getSectionId].splice(optionIndex, 1);
     }
 
-    setFilters(newFilters);
-    sessionStorage.setItem("filters", JSON.stringify(newFilters));
+    setFilters(cpyFilters);
+    sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
   };
 
-  const fetchUserLocation = () => {
+  const getUserLocation = () => {
     if (!navigator.geolocation) {
-      setLocationError("Geolocation not supported in your browser.");
+      setLocationError("Geolocation is not supported by your browser.");
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
-
-        if (lastLocationRef.current) {
-          const prev = lastLocationRef.current;
-          const distance = getDistanceFromLatLonInMeters(
-            prev.latitude,
-            prev.longitude,
-            latitude,
-            longitude
-          );
-
-          if (distance < 300) {
-            console.log("📍 Skipping update, moved only", distance, "meters.");
-            return;
-          }
-        }
-
-        const newLocation = { latitude, longitude };
-        lastLocationRef.current = newLocation;
-        setUserLocation(newLocation);
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
         setLocationError(null);
+        setHasRequestedLocation(true);
       },
       (error) => {
-        console.error("❌ Location Error:", error);
         if (error.code === 1) {
-          setLocationError(
-            "Location permission denied. Please allow it in browser settings."
-          );
+          setLocationError("Location permission denied. Please enable it in browser settings.");
         } else {
           setLocationError("Failed to fetch location. Try again.");
         }
+        setHasRequestedLocation(true);
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   };
 
-  // Load filters + location on first mount
+  // Try to fetch location only once on mount
   useEffect(() => {
-    setSort("price-lowtohigh");
+    if (!hasRequestedLocation) {
+      getUserLocation();
+    }
+  }, [hasRequestedLocation]);
+
+  // Set filters from session on mount
+  useEffect(() => {
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
-    fetchUserLocation(); // get location once
   }, []);
 
-  // Sync URL params
+  // Set search params in URL when filters change
   useEffect(() => {
     if (filters && Object.keys(filters).length > 0) {
       const queryString = createSearchParamsHelper(filters);
@@ -135,9 +102,10 @@ const ShoppingListing = () => {
     }
   }, [filters]);
 
-  // Fetch restaurants once location is ready
+  // Fetch restaurants when location + filters are ready
   useEffect(() => {
     if (
+      !locationError &&
       userLocation &&
       typeof userLocation.latitude === "number" &&
       typeof userLocation.longitude === "number"
@@ -148,14 +116,9 @@ const ShoppingListing = () => {
         longitude: userLocation.longitude,
       };
 
-      dispatch(
-        fetchAllFilteredRestaurants({
-          filterParams: filterParamsWithLocation,
-          sortParams: sort,
-        })
-      );
+      dispatch(fetchAllFilteredRestaurants({ filterParams: filterParamsWithLocation, sortParams: sort }));
     }
-  }, [userLocation, filters, sort, dispatch]);
+  }, [dispatch, userLocation, filters, sort, locationError]);
 
   return (
     <div className="bg-gradient-to-br from-[#ffe3e3] via-[#fff0f0] to-[#ffe3e3] min-h-screen font-poppins">
@@ -170,9 +133,7 @@ const ShoppingListing = () => {
           <div className="p-4 border-b flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-800">All Restaurants</h2>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">
-                {restaurantList.length} Restaurants
-              </span>
+              <span className="text-sm text-gray-500">{restaurantList.length} Restaurants</span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button className="flex items-center gap-1" variant="outline" size="sm">
@@ -183,7 +144,7 @@ const ShoppingListing = () => {
                 <DropdownMenuContent align="end" className="w-[200px]">
                   <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
                     {sortOptions.map((sortItem) => (
-                      <DropdownMenuRadioItem value={sortItem.id} key={sortItem.id}>
+                      <DropdownMenuRadioItem key={sortItem.id} value={sortItem.id}>
                         {sortItem.label}
                       </DropdownMenuRadioItem>
                     ))}
@@ -193,44 +154,37 @@ const ShoppingListing = () => {
             </div>
           </div>
 
-          {/* Debug / Location Info */}
           {userLocation && (
-            <div className="text-center text-sm text-green-700 mt-1">
-              📍 Using Location: {userLocation.latitude}, {userLocation.longitude}
+            <div className="p-2 text-sm text-green-700 bg-green-100 rounded mx-4 mt-2">
+              📍 Using Location: Lat {userLocation.latitude.toFixed(4)}, Lng {userLocation.longitude.toFixed(4)}
             </div>
           )}
 
           {locationError && (
-            <div className="p-4 text-center text-red-600 font-semibold bg-white shadow rounded mx-4 mt-3">
-              {locationError}
-              <div className="mt-2">
-                <Button onClick={fetchUserLocation} className="bg-blue-600 text-white">
-                  📍 Tap to Retry Location Access
-                </Button>
-              </div>
+            <div className="text-center font-semibold bg-white rounded-lg shadow-md m-5 p-4">
+              <p className="text-red-600">📍 {locationError}</p>
+              <Button onClick={getUserLocation} className="mt-3">
+                📍 Tap to Retry Location Access
+              </Button>
             </div>
           )}
 
-          {/* List or Loading */}
           {!locationError && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
               {isLoading ? (
                 [...Array(8)].map((_, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-gray-200 h-48 rounded-lg animate-pulse p-4 flex flex-col gap-2"
-                  >
+                  <div key={idx} className="bg-gray-200 h-48 rounded-lg animate-pulse p-4 flex flex-col gap-2">
                     <div className="h-28 bg-gray-300 rounded-md"></div>
                     <div className="h-4 w-3/4 bg-gray-300 rounded"></div>
                     <div className="h-4 w-1/2 bg-gray-300 rounded"></div>
                   </div>
                 ))
-              ) : restaurantList.length > 0 ? (
-                restaurantList.map((item) => (
-                  <ShoppingProductTile key={item._id} product={item} />
+              ) : restaurantList && restaurantList.length > 0 ? (
+                restaurantList.map((restaurantItem) => (
+                  <ShoppingProductTile key={restaurantItem._id} product={restaurantItem} />
                 ))
               ) : (
-                <h1 className="text-center font-semibold text-sm text-green-700 bg-green-100 rounded mx-4 mt-4 p-2">
+                <h1 className="text-center font-semibold p-2 text-sm text-green-700 bg-green-100 rounded mx-4 mt-2 mb-10">
                   Currently We Are Not Available in Your Location!
                 </h1>
               )}
