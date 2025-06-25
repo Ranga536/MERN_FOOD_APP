@@ -12,55 +12,63 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
 import { fetchAllFilteredRestaurants } from "@/store/restaurants/restaurant-slice";
-import { ArrowUpDownIcon, Loader2 } from "lucide-react";
+import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
-
   for (const [key, value] of Object.entries(filterParams)) {
     if (Array.isArray(value) && value.length > 0) {
       const paramValue = value.join(",");
       queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
     }
   }
-
   return queryParams.join("&");
 }
 
 const ShoppingListing = () => {
   const dispatch = useDispatch();
-  const { restaurantList, isLoading } = useSelector((state) => state.shopRestaurants);
+  const { restaurantList, isLoading } = useSelector(
+    (state) => state.shopRestaurants
+  );
 
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
   const [isLocationLoading, setIsLocationLoading] = useState(true);
 
-  const handleSort = (value) => setSort(value);
+  const handleSort = (value) => {
+    setSort(value);
+  };
 
-  const handleFilter = (sectionId, option) => {
-    let updatedFilters = { ...filters };
-    const options = updatedFilters[sectionId] || [];
-    const index = options.indexOf(option);
+  const handleFilter = (getSectionId, getCurrentOption) => {
+    let cpyFilters = { ...filters };
+    const index = Object.keys(cpyFilters).indexOf(getSectionId);
 
     if (index === -1) {
-      options.push(option);
+      cpyFilters[getSectionId] = [getCurrentOption];
     } else {
-      options.splice(index, 1);
+      const optionIndex = cpyFilters[getSectionId].indexOf(getCurrentOption);
+      if (optionIndex === -1) {
+        cpyFilters[getSectionId].push(getCurrentOption);
+      } else {
+        cpyFilters[getSectionId].splice(optionIndex, 1);
+      }
     }
 
-    updatedFilters[sectionId] = options;
-    setFilters(updatedFilters);
-    sessionStorage.setItem("filters", JSON.stringify(updatedFilters));
+    setFilters(cpyFilters);
+    sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
   };
 
   const handleGetLocation = () => {
     setIsLocationLoading(true);
+    setLocationError(null);
+
     if (!navigator.geolocation) {
       setLocationError("Geolocation is not supported by your browser.");
       setIsLocationLoading(false);
@@ -70,19 +78,42 @@ const ShoppingListing = () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        const loc = { latitude, longitude };
-        setUserLocation(loc);
-        sessionStorage.setItem("userLocation", JSON.stringify(loc));
-        setLocationError(null);
+        const locationObj = { latitude, longitude };
+        setUserLocation(locationObj);
+        sessionStorage.setItem("userLocation", JSON.stringify(locationObj));
         setIsLocationLoading(false);
       },
       (error) => {
+        console.error("Location error:", error);
         if (error.code === 1) {
-          setLocationError("Location permission denied. Please enable it in browser settings.");
+          setLocationError("Location permission denied. Enable in browser settings.");
+        } else if (error.code === 2) {
+          setLocationError("Location unavailable. Try again.");
+        } else if (error.code === 3) {
+          setLocationError("Timed out. Trying again...");
+          // Retry with less accuracy
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              const locationObj = { latitude, longitude };
+              setUserLocation(locationObj);
+              sessionStorage.setItem("userLocation", JSON.stringify(locationObj));
+              setIsLocationLoading(false);
+            },
+            () => {
+              setLocationError("Still unable to fetch location. Try again.");
+              setIsLocationLoading(false);
+            },
+            {
+              enableHighAccuracy: false,
+              timeout: 15000,
+              maximumAge: 0,
+            }
+          );
         } else {
-          setLocationError("Unable to fetch location. Try again.");
+          setLocationError("Unknown error occurred. Try again.");
+          setIsLocationLoading(false);
         }
-        setIsLocationLoading(false);
       },
       {
         enableHighAccuracy: true,
@@ -92,32 +123,35 @@ const ShoppingListing = () => {
     );
   };
 
+  // Get location from sessionStorage or fetch fresh
   useEffect(() => {
-    const savedLocation = sessionStorage.getItem("userLocation");
-    if (savedLocation) {
-      const parsed = JSON.parse(savedLocation);
+    const stored = sessionStorage.getItem("userLocation");
+    if (stored) {
+      const parsed = JSON.parse(stored);
       if (parsed.latitude && parsed.longitude) {
         setUserLocation(parsed);
         setIsLocationLoading(false);
         return;
       }
     }
-
     handleGetLocation();
   }, []);
 
+  // Load filters & sort
   useEffect(() => {
     setSort("price-lowtohigh");
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
   }, []);
 
+  // Update URL
   useEffect(() => {
     if (filters && Object.keys(filters).length > 0) {
-      const queryString = createSearchParamsHelper(filters);
-      setSearchParams(new URLSearchParams(queryString));
+      const query = createSearchParamsHelper(filters);
+      setSearchParams(new URLSearchParams(query));
     }
   }, [filters]);
 
+  // Fetch restaurants after location is ready
   useEffect(() => {
     if (
       locationError ||
@@ -129,15 +163,19 @@ const ShoppingListing = () => {
     }
 
     if (filters && sort) {
-      const params = {
+      const payload = {
         ...filters,
         latitude: userLocation.latitude,
         longitude: userLocation.longitude,
       };
-
-      dispatch(fetchAllFilteredRestaurants({ filterParams: params, sortParams: sort }));
+      dispatch(
+        fetchAllFilteredRestaurants({
+          filterParams: payload,
+          sortParams: sort,
+        })
+      );
     }
-  }, [dispatch, userLocation, filters, sort, locationError]);
+  }, [userLocation, filters, sort, dispatch, locationError]);
 
   return (
     <div className="bg-gradient-to-br from-[#ffe3e3] via-[#fff0f0] to-[#ffe3e3] min-h-screen font-poppins">
@@ -164,9 +202,9 @@ const ShoppingListing = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[200px]">
                   <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
-                    {sortOptions.map((item) => (
-                      <DropdownMenuRadioItem value={item.id} key={item.id}>
-                        {item.label}
+                    {sortOptions.map((sortItem) => (
+                      <DropdownMenuRadioItem key={sortItem.id} value={sortItem.id}>
+                        {sortItem.label}
                       </DropdownMenuRadioItem>
                     ))}
                   </DropdownMenuRadioGroup>
@@ -175,16 +213,12 @@ const ShoppingListing = () => {
             </div>
           </div>
 
-          {/* ✅ Location Loading */}
-          {isLocationLoading && (
-            <div className="text-center p-10 text-gray-700 font-semibold">
-              <Loader2 className="animate-spin inline-block mr-2" />
-              Detecting your location...
+          {/* Location Status */}
+          {isLocationLoading ? (
+            <div className="p-6 text-center text-sm font-semibold text-blue-600">
+              📍 Detecting your location... <span className="animate-pulse">⏳</span>
             </div>
-          )}
-
-          {/* ✅ Location Error */}
-          {!isLocationLoading && locationError && (
+          ) : locationError ? (
             <div className="text-center font-semibold bg-white rounded-lg shadow-md m-5 p-6 text-red-600">
               📍 {locationError}
               <br />
@@ -195,10 +229,14 @@ const ShoppingListing = () => {
                 📍 Try Again – Enable Location Access
               </Button>
             </div>
+          ) : userLocation && (
+            <div className="p-2 text-sm text-green-700 bg-green-100 rounded mx-4 mt-2">
+              📍 Using Location: Lat {userLocation.latitude}, Lng {userLocation.longitude}
+            </div>
           )}
 
-          {/* ✅ Restaurant Results */}
-          {!isLocationLoading && !locationError && (
+          {/* Restaurant List or Loading/Empty State */}
+          {!locationError && !isLocationLoading && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
               {isLoading ? (
                 [...Array(8)].map((_, idx) => (
@@ -212,8 +250,11 @@ const ShoppingListing = () => {
                   </div>
                 ))
               ) : restaurantList && restaurantList.length > 0 ? (
-                restaurantList.map((restaurant) => (
-                  <ShoppingProductTile key={restaurant._id} product={restaurant} />
+                restaurantList.map((restaurantItem) => (
+                  <ShoppingProductTile
+                    key={restaurantItem._id}
+                    product={restaurantItem}
+                  />
                 ))
               ) : (
                 <h1 className="text-center font-semibold p-2 text-sm text-green-700 bg-green-100 rounded mx-4 mt-2 mb-10">
