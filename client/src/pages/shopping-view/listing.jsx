@@ -1,10 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
-import ProductFilter from "@/components/shopping-view/filter";
-import FooterInfo from "@/components/shopping-view/footer";
-import ShoppingProductTile from "@/components/shopping-view/product-tile";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,111 +8,189 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { fetchAllFilteredRestaurants } from "@/store/restaurants/restaurant-slice";
-import { filterOptions, sortOptions } from "@/config";
+import { Button } from "@/components/ui/button";
 import { ArrowUpDownIcon } from "lucide-react";
+
+import ProductFilter from "@/components/shopping-view/filter";
+import FooterInfo from "@/components/shopping-view/footer";
+import ShoppingProductTile from "@/components/shopping-view/product-tile";
+
+import { filterOptions, sortOptions } from "@/config";
+import { fetchAllFilteredRestaurants } from "@/store/restaurants/restaurant-slice";
+
+// Distance calculation function (Haversine formula)
+const getDistanceInMeters = (lat1, lon1, lat2, lon2) => {
+  const R = 6371000; // Earth's radius in meters
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
+
   for (const [key, value] of Object.entries(filterParams)) {
     if (Array.isArray(value) && value.length > 0) {
       const paramValue = value.join(",");
       queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
     }
   }
+
   return queryParams.join("&");
 }
 
 const ShoppingListing = () => {
   const dispatch = useDispatch();
-  const { restaurantList, isLoading } = useSelector((state) => state.shopRestaurants);
+  const { restaurantList, isLoading } = useSelector(
+    (state) => state.shopRestaurants
+  );
+
   const [filters, setFilters] = useState({});
-  const [sort, setSort] = useState("price-lowtohigh");
+  const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
-  const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
 
-  const handleSort = (value) => setSort(value);
+  const lastLocationRef = useRef(null);
 
-  const handleFilter = (getSectionId, getCurrentOption) => {
-    let cpyFilters = { ...filters };
-    const index = Object.keys(cpyFilters).indexOf(getSectionId);
-
-    if (index === -1) {
-      cpyFilters[getSectionId] = [getCurrentOption];
-    } else {
-      const optionIndex = cpyFilters[getSectionId].indexOf(getCurrentOption);
-      if (optionIndex === -1) cpyFilters[getSectionId].push(getCurrentOption);
-      else cpyFilters[getSectionId].splice(optionIndex, 1);
-    }
-
-    setFilters(cpyFilters);
-    sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
+  const handleSort = (value) => {
+    setSort(value);
   };
 
-  const getUserLocation = () => {
+  const handleFilter = (sectionId, option) => {
+    let updatedFilters = { ...filters };
+    const existingOptions = updatedFilters[sectionId] || [];
+
+    if (existingOptions.includes(option)) {
+      updatedFilters[sectionId] = existingOptions.filter((opt) => opt !== option);
+    } else {
+      updatedFilters[sectionId] = [...existingOptions, option];
+    }
+
+    setFilters(updatedFilters);
+    sessionStorage.setItem("filters", JSON.stringify(updatedFilters));
+  };
+
+  // Request location manually via button
+  const handleGetLocation = () => {
     if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by your browser.");
+      alert("Geolocation is not supported by your browser.");
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setUserLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ latitude, longitude });
+        lastLocationRef.current = { latitude, longitude };
         setLocationError(null);
-        setHasRequestedLocation(true);
       },
       (error) => {
         if (error.code === 1) {
-          setLocationError("Location permission denied. Please enable it in browser settings.");
+          setLocationError(
+            "Location permission denied. Please enable it in browser settings."
+          );
         } else {
-          setLocationError("Failed to fetch location. Try again.");
+          setLocationError("Unable to fetch location. Try again.");
         }
-        setHasRequestedLocation(true);
+        console.error("Error fetching location:", error);
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
     );
   };
 
-  // Try to fetch location only once on mount
+  // Watch user location continuously (optimized)
   useEffect(() => {
-    if (!hasRequestedLocation) {
-      getUserLocation();
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser.");
+      return;
     }
-  }, [hasRequestedLocation]);
 
-  // Set filters from session on mount
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        if (lastLocationRef.current) {
+          const prev = lastLocationRef.current;
+          const distance = getDistanceInMeters(
+            prev.latitude,
+            prev.longitude,
+            latitude,
+            longitude
+          );
+
+          if (distance < 300) return; // Skip API call if not moved much
+        }
+
+        setUserLocation({ latitude, longitude });
+        lastLocationRef.current = { latitude, longitude };
+        setLocationError(null);
+      },
+      (error) => {
+        console.error("Location error:", error);
+        setLocationError(
+          "Location access denied or unavailable. Please allow it for better results."
+        );
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+
+    return () => navigator.geolocation.clearWatch(watchId);
+  }, []);
+
+  // Set default sort and filters
   useEffect(() => {
+    setSort("price-lowtohigh");
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
   }, []);
 
-  // Set search params in URL when filters change
+  // Update search params in URL
   useEffect(() => {
     if (filters && Object.keys(filters).length > 0) {
-      const queryString = createSearchParamsHelper(filters);
-      setSearchParams(new URLSearchParams(queryString));
+      const query = createSearchParamsHelper(filters);
+      setSearchParams(new URLSearchParams(query));
     }
   }, [filters]);
 
-  // Fetch restaurants when location + filters are ready
+  // Fetch restaurants on location or filter/sort change
   useEffect(() => {
     if (
-      !locationError &&
-      userLocation &&
-      typeof userLocation.latitude === "number" &&
-      typeof userLocation.longitude === "number"
+      locationError ||
+      !userLocation ||
+      typeof userLocation.latitude !== "number" ||
+      typeof userLocation.longitude !== "number"
     ) {
+      return;
+    }
+
+    if (filters && sort) {
       const filterParamsWithLocation = {
         ...filters,
         latitude: userLocation.latitude,
         longitude: userLocation.longitude,
       };
 
-      dispatch(fetchAllFilteredRestaurants({ filterParams: filterParamsWithLocation, sortParams: sort }));
+      dispatch(
+        fetchAllFilteredRestaurants({
+          filterParams: filterParamsWithLocation,
+          sortParams: sort,
+        })
+      );
     }
   }, [dispatch, userLocation, filters, sort, locationError]);
 
@@ -133,7 +207,9 @@ const ShoppingListing = () => {
           <div className="p-4 border-b flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-800">All Restaurants</h2>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">{restaurantList.length} Restaurants</span>
+              <span className="text-sm text-gray-500">
+                {restaurantList.length} Restaurants
+              </span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button className="flex items-center gap-1" variant="outline" size="sm">
@@ -143,9 +219,9 @@ const ShoppingListing = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[200px]">
                   <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
-                    {sortOptions.map((sortItem) => (
-                      <DropdownMenuRadioItem key={sortItem.id} value={sortItem.id}>
-                        {sortItem.label}
+                    {sortOptions.map((item) => (
+                      <DropdownMenuRadioItem key={item.id} value={item.id}>
+                        {item.label}
                       </DropdownMenuRadioItem>
                     ))}
                   </DropdownMenuRadioGroup>
@@ -154,34 +230,37 @@ const ShoppingListing = () => {
             </div>
           </div>
 
-          {userLocation && (
-            <div className="p-2 text-sm text-green-700 bg-green-100 rounded mx-4 mt-2">
-              📍 Using Location: Lat {userLocation.latitude.toFixed(4)}, Lng {userLocation.longitude.toFixed(4)}
-            </div>
-          )}
-
+          {/* Show location error with button */}
           {locationError && (
-            <div className="text-center font-semibold bg-white rounded-lg shadow-md m-5 p-4">
-              <p className="text-red-600">📍 {locationError}</p>
-              <Button onClick={getUserLocation} className="mt-3">
-                📍 Tap to Retry Location Access
+            <div className="text-center font-semibold bg-white rounded-lg shadow-md m-5 p-6 text-red-600">
+              📍 {locationError}
+              <br />
+              <Button
+                onClick={handleGetLocation}
+                className="mt-3 bg-blue-600 text-white hover:bg-blue-700"
+              >
+                📍 Enable Location Access
               </Button>
             </div>
           )}
 
+          {/* Restaurant List */}
           {!locationError && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
               {isLoading ? (
                 [...Array(8)].map((_, idx) => (
-                  <div key={idx} className="bg-gray-200 h-48 rounded-lg animate-pulse p-4 flex flex-col gap-2">
+                  <div
+                    key={idx}
+                    className="bg-gray-200 h-48 rounded-lg animate-pulse p-4 flex flex-col gap-2"
+                  >
                     <div className="h-28 bg-gray-300 rounded-md"></div>
                     <div className="h-4 w-3/4 bg-gray-300 rounded"></div>
                     <div className="h-4 w-1/2 bg-gray-300 rounded"></div>
                   </div>
                 ))
-              ) : restaurantList && restaurantList.length > 0 ? (
-                restaurantList.map((restaurantItem) => (
-                  <ShoppingProductTile key={restaurantItem._id} product={restaurantItem} />
+              ) : restaurantList.length > 0 ? (
+                restaurantList.map((item) => (
+                  <ShoppingProductTile key={item._id} product={item} />
                 ))
               ) : (
                 <h1 className="text-center font-semibold p-2 text-sm text-green-700 bg-green-100 rounded mx-4 mt-2 mb-10">
