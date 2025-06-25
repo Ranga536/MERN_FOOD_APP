@@ -1,7 +1,11 @@
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { fetchAllFilteredRestaurants } from "@/store/restaurants/restaurant-slice";
 import ProductFilter from "@/components/shopping-view/filter";
-import { filterOptions } from "@/config";
-import FooterInfo from "@/components/shopping-view/footer";
+import { filterOptions, sortOptions } from "@/config";
 import ShoppingProductTile from "@/components/shopping-view/product-tile";
+import FooterInfo from "@/components/shopping-view/footer";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,20 +14,28 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { sortOptions } from "@/config";
-import { fetchAllFilteredRestaurants } from "@/store/restaurants/restaurant-slice";
 import { ArrowUpDownIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+
+// Haversine distance calculation
+function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
 
   for (const [key, value] of Object.entries(filterParams)) {
     if (Array.isArray(value) && value.length > 0) {
-      const paramValue = value.join(",");
-      queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
+      queryParams.push(`${key}=${encodeURIComponent(value.join(","))}`);
     }
   }
 
@@ -42,53 +54,62 @@ const ShoppingListing = () => {
 
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
+  const lastLocationRef = useRef(null);
 
-  const handleSort = (value) => {
-    setSort(value);
-  };
+  const handleSort = (value) => setSort(value);
 
-  const handleFilter = (getSectionId, getCurrentOption) => {
-    let cpyFilters = { ...filters };
-    const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
+  const handleFilter = (sectionId, currentOption) => {
+    const newFilters = { ...filters };
+    const options = newFilters[sectionId] || [];
 
-    if (indexOfCurrentSection === -1) {
-      cpyFilters = {
-        ...cpyFilters,
-        [getSectionId]: [getCurrentOption],
-      };
+    if (options.includes(currentOption)) {
+      newFilters[sectionId] = options.filter((opt) => opt !== currentOption);
     } else {
-      const indexOfCurrentOption =
-        cpyFilters[getSectionId].indexOf(getCurrentOption);
-
-      if (indexOfCurrentOption === -1)
-        cpyFilters[getSectionId].push(getCurrentOption);
-      else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+      newFilters[sectionId] = [...options, currentOption];
     }
 
-    setFilters(cpyFilters);
-    sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
+    setFilters(newFilters);
+    sessionStorage.setItem("filters", JSON.stringify(newFilters));
   };
 
-  // ✅ Stable location using watchPosition
-  useEffect(() => {
+  const fetchUserLocation = () => {
     if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by your browser.");
+      setLocationError("Geolocation not supported in your browser.");
       return;
     }
 
-    const watchId = navigator.geolocation.watchPosition(
+    navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        console.log("📍 Updated Location:", latitude, longitude);
-        setUserLocation({ latitude, longitude });
+
+        if (lastLocationRef.current) {
+          const prev = lastLocationRef.current;
+          const distance = getDistanceFromLatLonInMeters(
+            prev.latitude,
+            prev.longitude,
+            latitude,
+            longitude
+          );
+
+          if (distance < 300) {
+            console.log("📍 Skipping update, moved only", distance, "meters.");
+            return;
+          }
+        }
+
+        const newLocation = { latitude, longitude };
+        lastLocationRef.current = newLocation;
+        setUserLocation(newLocation);
         setLocationError(null);
       },
       (error) => {
         console.error("❌ Location Error:", error);
         if (error.code === 1) {
-          setLocationError("Location permission denied.");
+          setLocationError(
+            "Location permission denied. Please allow it in browser settings."
+          );
         } else {
-          setLocationError("Location unavailable or timeout.");
+          setLocationError("Failed to fetch location. Try again.");
         }
       },
       {
@@ -97,59 +118,31 @@ const ShoppingListing = () => {
         maximumAge: 0,
       }
     );
-
-    return () => {
-      navigator.geolocation.clearWatch(watchId); // clean up
-    };
-  }, []);
-
-  // 🟦 Manual location re-trigger
-  const handleGetLocation = () => {
-    if (!navigator.geolocation) {
-      alert("Geolocation not supported by your browser.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-        setLocationError(null);
-      },
-      (error) => {
-        console.log("Manual Location Error:", error);
-        setLocationError("Please allow location access in browser settings.");
-      }
-    );
   };
 
-  // default sort and filter load
+  // Load filters + location on first mount
   useEffect(() => {
     setSort("price-lowtohigh");
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
+    fetchUserLocation(); // get location once
   }, []);
 
+  // Sync URL params
   useEffect(() => {
     if (filters && Object.keys(filters).length > 0) {
-      const query = createSearchParamsHelper(filters);
-      setSearchParams(new URLSearchParams(query));
+      const queryString = createSearchParamsHelper(filters);
+      setSearchParams(new URLSearchParams(queryString));
     }
   }, [filters]);
 
-  // fetch nearby restaurants
+  // Fetch restaurants once location is ready
   useEffect(() => {
     if (
-      !userLocation ||
-      typeof userLocation.latitude !== "number" ||
-      typeof userLocation.longitude !== "number"
+      userLocation &&
+      typeof userLocation.latitude === "number" &&
+      typeof userLocation.longitude === "number"
     ) {
-      return;
-    }
-
-    if (filters && sort) {
-      const filterWithLocation = {
+      const filterParamsWithLocation = {
         ...filters,
         latitude: userLocation.latitude,
         longitude: userLocation.longitude,
@@ -157,12 +150,12 @@ const ShoppingListing = () => {
 
       dispatch(
         fetchAllFilteredRestaurants({
-          filterParams: filterWithLocation,
+          filterParams: filterParamsWithLocation,
           sortParams: sort,
         })
       );
     }
-  }, [userLocation, filters, sort]);
+  }, [userLocation, filters, sort, dispatch]);
 
   return (
     <div className="bg-gradient-to-br from-[#ffe3e3] via-[#fff0f0] to-[#ffe3e3] min-h-screen font-poppins">
@@ -200,24 +193,25 @@ const ShoppingListing = () => {
             </div>
           </div>
 
-          {/* ✅ Show location info or error */}
+          {/* Debug / Location Info */}
           {userLocation && (
-            <div className="text-center text-green-800 text-sm p-2">
-              {/* 📍 You're browsing from: {userLocation.latitude.toFixed(4)}, {userLocation.longitude.toFixed(4)} */}
+            <div className="text-center text-sm text-green-700 mt-1">
+              📍 Using Location: {userLocation.latitude}, {userLocation.longitude}
             </div>
           )}
 
           {locationError && (
-            <div className="text-center text-red-600 font-semibold p-4">
+            <div className="p-4 text-center text-red-600 font-semibold bg-white shadow rounded mx-4 mt-3">
               {locationError}
-              <br />
-              <Button className="mt-2" onClick={handleGetLocation}>
-                📍 Try Again – Enable Location
-              </Button>
+              <div className="mt-2">
+                <Button onClick={fetchUserLocation} className="bg-blue-600 text-white">
+                  📍 Tap to Retry Location Access
+                </Button>
+              </div>
             </div>
           )}
 
-          {/* Restaurant Grid or Empty */}
+          {/* List or Loading */}
           {!locationError && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
               {isLoading ? (
@@ -231,15 +225,12 @@ const ShoppingListing = () => {
                     <div className="h-4 w-1/2 bg-gray-300 rounded"></div>
                   </div>
                 ))
-              ) : restaurantList && restaurantList.length > 0 ? (
-                restaurantList.map((restaurantItem) => (
-                  <ShoppingProductTile
-                    key={restaurantItem._id}
-                    product={restaurantItem}
-                  />
+              ) : restaurantList.length > 0 ? (
+                restaurantList.map((item) => (
+                  <ShoppingProductTile key={item._id} product={item} />
                 ))
               ) : (
-                <h1 className="text-center font-semibold p-2 text-sm text-green-700 bg-green-100 rounded mx-4 mt-2 mb-10">
+                <h1 className="text-center font-semibold text-sm text-green-700 bg-green-100 rounded mx-4 mt-4 p-2">
                   Currently We Are Not Available in Your Location!
                 </h1>
               )}
@@ -254,6 +245,267 @@ const ShoppingListing = () => {
 };
 
 export default ShoppingListing;
+
+
+
+
+
+// import ProductFilter from "@/components/shopping-view/filter";
+// import { filterOptions } from "@/config";
+// import FooterInfo from "@/components/shopping-view/footer";
+// import ShoppingProductTile from "@/components/shopping-view/product-tile";
+// import { Button } from "@/components/ui/button";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuRadioGroup,
+//   DropdownMenuRadioItem,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
+// import { sortOptions } from "@/config";
+// import { fetchAllFilteredRestaurants } from "@/store/restaurants/restaurant-slice";
+// import { ArrowUpDownIcon } from "lucide-react";
+// import { useEffect, useState } from "react";
+// import { useDispatch, useSelector } from "react-redux";
+// import { useSearchParams } from "react-router-dom";
+
+// function createSearchParamsHelper(filterParams) {
+//   const queryParams = [];
+
+//   for (const [key, value] of Object.entries(filterParams)) {
+//     if (Array.isArray(value) && value.length > 0) {
+//       const paramValue = value.join(",");
+//       queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
+//     }
+//   }
+
+//   return queryParams.join("&");
+// }
+
+// const ShoppingListing = () => {
+//   const dispatch = useDispatch();
+//   const { restaurantList, isLoading } = useSelector(
+//     (state) => state.shopRestaurants
+//   );
+
+//   const [filters, setFilters] = useState({});
+//   const [sort, setSort] = useState(null);
+//   const [searchParams, setSearchParams] = useSearchParams();
+
+//   const [userLocation, setUserLocation] = useState(null);
+//   const [locationError, setLocationError] = useState(null);
+
+//   const handleSort = (value) => {
+//     setSort(value);
+//   };
+
+//   const handleFilter = (getSectionId, getCurrentOption) => {
+//     let cpyFilters = { ...filters };
+//     const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
+
+//     if (indexOfCurrentSection === -1) {
+//       cpyFilters = {
+//         ...cpyFilters,
+//         [getSectionId]: [getCurrentOption],
+//       };
+//     } else {
+//       const indexOfCurrentOption =
+//         cpyFilters[getSectionId].indexOf(getCurrentOption);
+
+//       if (indexOfCurrentOption === -1)
+//         cpyFilters[getSectionId].push(getCurrentOption);
+//       else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+//     }
+
+//     setFilters(cpyFilters);
+//     sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
+//   };
+
+//   // ✅ Stable location using watchPosition
+//   useEffect(() => {
+//     if (!navigator.geolocation) {
+//       setLocationError("Geolocation is not supported by your browser.");
+//       return;
+//     }
+
+//     const watchId = navigator.geolocation.watchPosition(
+//       (position) => {
+//         const { latitude, longitude } = position.coords;
+//         console.log("📍 Updated Location:", latitude, longitude);
+//         setUserLocation({ latitude, longitude });
+//         setLocationError(null);
+//       },
+//       (error) => {
+//         console.error("❌ Location Error:", error);
+//         if (error.code === 1) {
+//           setLocationError("Location permission denied.");
+//         } else {
+//           setLocationError("Location unavailable or timeout.");
+//         }
+//       },
+//       {
+//         enableHighAccuracy: true,
+//         timeout: 10000,
+//         maximumAge: 0,
+//       }
+//     );
+
+//     return () => {
+//       navigator.geolocation.clearWatch(watchId); // clean up
+//     };
+//   }, []);
+
+//   // 🟦 Manual location re-trigger
+//   const handleGetLocation = () => {
+//     if (!navigator.geolocation) {
+//       alert("Geolocation not supported by your browser.");
+//       return;
+//     }
+
+//     navigator.geolocation.getCurrentPosition(
+//       (position) => {
+//         setUserLocation({
+//           latitude: position.coords.latitude,
+//           longitude: position.coords.longitude,
+//         });
+//         setLocationError(null);
+//       },
+//       (error) => {
+//         console.log("Manual Location Error:", error);
+//         setLocationError("Please allow location access in browser settings.");
+//       }
+//     );
+//   };
+
+//   // default sort and filter load
+//   useEffect(() => {
+//     setSort("price-lowtohigh");
+//     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
+//   }, []);
+
+//   useEffect(() => {
+//     if (filters && Object.keys(filters).length > 0) {
+//       const query = createSearchParamsHelper(filters);
+//       setSearchParams(new URLSearchParams(query));
+//     }
+//   }, [filters]);
+
+//   // fetch nearby restaurants
+//   useEffect(() => {
+//     if (
+//       !userLocation ||
+//       typeof userLocation.latitude !== "number" ||
+//       typeof userLocation.longitude !== "number"
+//     ) {
+//       return;
+//     }
+
+//     if (filters && sort) {
+//       const filterWithLocation = {
+//         ...filters,
+//         latitude: userLocation.latitude,
+//         longitude: userLocation.longitude,
+//       };
+
+//       dispatch(
+//         fetchAllFilteredRestaurants({
+//           filterParams: filterWithLocation,
+//           sortParams: sort,
+//         })
+//       );
+//     }
+//   }, [userLocation, filters, sort]);
+
+//   return (
+//     <div className="bg-gradient-to-br from-[#ffe3e3] via-[#fff0f0] to-[#ffe3e3] min-h-screen font-poppins">
+//       <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 p-4 md:p-6">
+//         <ProductFilter
+//           filters={filters}
+//           handleFilter={handleFilter}
+//           filterOptions={filterOptions}
+//         />
+
+//         <div className="bg-gradient-to-br from-[#ffe3e3] via-[#b7d8c6] to-[#ffe3e3] w-full rounded-xl shadow-lg overflow-hidden">
+//           <div className="p-4 border-b flex items-center justify-between">
+//             <h2 className="text-xl font-bold text-gray-800">All Restaurants</h2>
+//             <div className="flex items-center gap-3">
+//               <span className="text-sm text-gray-500">
+//                 {restaurantList.length} Restaurants
+//               </span>
+//               <DropdownMenu>
+//                 <DropdownMenuTrigger asChild>
+//                   <Button className="flex items-center gap-1" variant="outline" size="sm">
+//                     <ArrowUpDownIcon className="h-4 w-4" />
+//                     <span>Sort by</span>
+//                   </Button>
+//                 </DropdownMenuTrigger>
+//                 <DropdownMenuContent align="end" className="w-[200px]">
+//                   <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
+//                     {sortOptions.map((sortItem) => (
+//                       <DropdownMenuRadioItem value={sortItem.id} key={sortItem.id}>
+//                         {sortItem.label}
+//                       </DropdownMenuRadioItem>
+//                     ))}
+//                   </DropdownMenuRadioGroup>
+//                 </DropdownMenuContent>
+//               </DropdownMenu>
+//             </div>
+//           </div>
+
+//           {/* ✅ Show location info or error */}
+//           {userLocation && (
+//             <div className="text-center text-green-800 text-sm p-2">
+//               {/* 📍 You're browsing from: {userLocation.latitude.toFixed(4)}, {userLocation.longitude.toFixed(4)} */}
+//             </div>
+//           )}
+
+//           {locationError && (
+//             <div className="text-center text-red-600 font-semibold p-4">
+//               {locationError}
+//               <br />
+//               <Button className="mt-2" onClick={handleGetLocation}>
+//                 📍 Try Again – Enable Location
+//               </Button>
+//             </div>
+//           )}
+
+//           {/* Restaurant Grid or Empty */}
+//           {!locationError && (
+//             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+//               {isLoading ? (
+//                 [...Array(8)].map((_, idx) => (
+//                   <div
+//                     key={idx}
+//                     className="bg-gray-200 h-48 rounded-lg animate-pulse p-4 flex flex-col gap-2"
+//                   >
+//                     <div className="h-28 bg-gray-300 rounded-md"></div>
+//                     <div className="h-4 w-3/4 bg-gray-300 rounded"></div>
+//                     <div className="h-4 w-1/2 bg-gray-300 rounded"></div>
+//                   </div>
+//                 ))
+//               ) : restaurantList && restaurantList.length > 0 ? (
+//                 restaurantList.map((restaurantItem) => (
+//                   <ShoppingProductTile
+//                     key={restaurantItem._id}
+//                     product={restaurantItem}
+//                   />
+//                 ))
+//               ) : (
+//                 <h1 className="text-center font-semibold p-2 text-sm text-green-700 bg-green-100 rounded mx-4 mt-2 mb-10">
+//                   Currently We Are Not Available in Your Location!
+//                 </h1>
+//               )}
+//             </div>
+//           )}
+
+//           <FooterInfo />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ShoppingListing;
 
 
 
