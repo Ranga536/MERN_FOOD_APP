@@ -15,7 +15,7 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function (payload) {
 
-    const notificationTitle = payload.notification.title;
+  const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
     icon: "/android-launchericon-192-192.png", // path to your logo or favicon
@@ -34,15 +34,34 @@ messaging.onBackgroundMessage(function (payload) {
 });
 
 // ✅ Handle click event when user clicks notification
+// self.addEventListener("notificationclick", function(event) {
+//   event.notification.close();
+
+//   const redirectUrl = event.notification.data?.url || "https://www.delbite.com/shop/home"; // Default URL if not specified
+
+//   event.waitUntil(
+//     clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+//       for (const client of clientList) {
+//         if (client.url === redirectUrl && "focus" in client) {
+//           return client.focus();
+//         }
+//       }
+//       if (clients.openWindow) {
+//         return clients.openWindow(redirectUrl);
+//       }
+//     })
+//   );
+// });
+
 self.addEventListener("notificationclick", function(event) {
   event.notification.close();
 
-  const redirectUrl = event.notification.data?.url || "https://www.delbite.com/shop/home"; // Default URL if not specified
+  const redirectUrl = (event.notification.data && event.notification.data.url) || "https://www.delbite.com/shop/home";
 
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
-        if (client.url === redirectUrl && "focus" in client) {
+        if (client.url.includes('delbite.com') && "focus" in client) {
           return client.focus();
         }
       }
