@@ -5,8 +5,10 @@ firebase.initializeApp({
   apiKey: "AIzaSyAUTCnVmF-u7CH6nXkbxnWPBhnqydFFrLg",
   authDomain: "fooddeliverypush.firebaseapp.com",
   projectId: "fooddeliverypush",
+  storageBucket: "fooddeliverypush.firebasestorage.app",
   messagingSenderId: "886329277430",
   appId: "1:886329277430:web:422fc3ea316d952822e5d7",
+  measurementId: "G-MGLR87CKB0"
 });
 
 const messaging = firebase.messaging();
