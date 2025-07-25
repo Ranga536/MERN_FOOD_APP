@@ -15,12 +15,20 @@ router.post("/save", async (req, res) => {
   try {
     let existing = await FcmToken.findOne({ userId });
 
-    if (existing) {
-      existing.token = token;
-      existing.role = role;
-      await existing.save();
-    } else {
+    // if (existing) {
+    //   existing.token = token;
+    //   existing.role = role;
+    //   await existing.save();
+    // } else {
+    //   await FcmToken.create({ token, userId, role });
+    // }
+
+      if (!existing) {
+      // Save new token
       await FcmToken.create({ token, userId, role });
+      // console.log(`New FCM token saved for user ${userId}`);
+    } else {
+      // console.log(`FCM token already exists for user ${userId}`);
     }
 
     res.status(200).json({ message: "Token saved" });

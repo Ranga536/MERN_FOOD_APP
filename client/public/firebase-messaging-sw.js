@@ -14,24 +14,6 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function (payload) {
-  // console.log("📥 Received background message: ", payload);
-
-  // self.registration.showNotification(payload.notification.title, {
-  //   body: payload.notification.body,
-  //   icon: "/android-launchericon-192-192.png",
-  // });
-
-  //   const { title, body } = payload.notification;
-
-  // const notificationOptions = {
-  //   body,
-  //   icon: "/android-launchericon-192-192.png", // or your favicon
-  //   data: {
-  //     url: "https://www.delbite.com/shop", // 👈 the URL you want to open on click
-  //   },
-  // };
-
-  // self.registration.showNotification(title, notificationOptions);
 
     const notificationTitle = payload.notification.title;
   const notificationOptions = {
@@ -55,7 +37,7 @@ messaging.onBackgroundMessage(function (payload) {
 self.addEventListener("notificationclick", function(event) {
   event.notification.close();
 
-  const redirectUrl = event.notification.data?.url || "https://delbite.com/shop/home"; // Default URL if not specified
+  const redirectUrl = event.notification.data?.url || "https://www.delbite.com/shop/home"; // Default URL if not specified
 
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
