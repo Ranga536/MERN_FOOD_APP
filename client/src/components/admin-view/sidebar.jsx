@@ -3,6 +3,7 @@ import {
   ChartNoAxesCombined,
   Hotel,
   LayoutDashboard,
+  MessageCircleCode,
   ShieldUser,
   ShoppingBag,
   ShoppingBasket,
@@ -30,6 +31,12 @@ const adminSidebarMenuItems = [
     path: "/admin/orders",
     icon: <ShoppingBag color="#e60f0f" />,
   },
+  // {
+  //   id: "admin-notifications",
+  //   label: "Notifications",
+  //   path: "/admin/notifications",
+  //   icon: <MessageCircleCode color="orange" />
+  // },
 ];
 
 const MenuItems = ({ setOpen }) => {

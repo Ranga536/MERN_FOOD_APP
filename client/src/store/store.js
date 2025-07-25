@@ -10,6 +10,7 @@ import shopOrderSlice from "./restaurants/order-slice";
 import adminOrderSlice from "./admin/order-slice";
 import shopSearchSlice from "./restaurants/search-slice";
 import commonFeatureSlice from "./common-slice";
+import fcmReducerSlice from "./notifications/fcmSlice"; 
 
 const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ const store = configureStore({
     shopOrder: shopOrderSlice,
     shopSearch: shopSearchSlice,
     commonFeature: commonFeatureSlice,
+    fcm: fcmReducerSlice
   },
 });
 

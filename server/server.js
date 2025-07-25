@@ -14,6 +14,8 @@ const shopAddressRouter = require("./routes/restaurants/address-routes");
 const shopOrderRoutes = require("./routes/restaurants/order-routes");
 const shopSearchRoutes = require("./routes/restaurants/search-routes");
 const commonFeatureRoutes = require("./routes/common/feature-routes");
+const fcmRoutes = require("./routes/common/fcm-routes");
+const adminNotificationRoutes = require("./routes/admin/adminNotificationRoutes");
 
 const app = express();
 
@@ -49,6 +51,8 @@ app.use("/api/shop/address", shopAddressRouter);
 app.use("/api/shop/order", shopOrderRoutes);
 app.use("/api/shop/search", shopSearchRoutes);
 app.use("/api/common/feature", commonFeatureRoutes);
+app.use("/api/fcm", fcmRoutes);
+app.use("/api/admin", adminNotificationRoutes);
 
 app.listen(PORT, () => {
   console.log("server running!!")

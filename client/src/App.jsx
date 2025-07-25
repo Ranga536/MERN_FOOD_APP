@@ -30,6 +30,7 @@ import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
 import { Loader2, Loader2Icon } from "lucide-react";
 import ContactPage from "./pages/shopping-view/contact";
+import AdminNotificationsPage from "./pages/admin-view/SendNotificationPage";
 // import gifImg from "./assets/deliverybike-giphy.gif"
 
 
@@ -112,6 +113,7 @@ function App() {
           <Route path="orders" element={<AdminOrders />} />
           <Route path="restaurants" element={<AdminRestaurants />} />
           <Route path="restaurants/:id" element={<AdminMenuItems />} />
+          <Route path="notifications" element={<AdminNotificationsPage />} />
         </Route>
         <Route
           path="/shop"
