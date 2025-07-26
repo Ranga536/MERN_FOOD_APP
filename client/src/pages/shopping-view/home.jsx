@@ -601,6 +601,7 @@ const ShoppingHome = () => {
             token,
             userId: user.id,
             role: user.role,
+            userName: user.userName,
           }),
         });
       }

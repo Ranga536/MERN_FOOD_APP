@@ -6,7 +6,7 @@ const sendPushNotification = require("../../utils/sendPushNotification");
 // POST /api/fcm/save
 // ✅ Route 1: Save Token
 router.post("/save", async (req, res) => {
-  const { token, userId, role } = req.body;
+  const { token, userId, role, userName } = req.body;
 
   if (!token || !userId) {
     return res.status(400).json({ message: "Missing token or userId" });
@@ -25,7 +25,7 @@ router.post("/save", async (req, res) => {
 
       if (!existing) {
       // Save new token
-      await FcmToken.create({ token, userId, role });
+      await FcmToken.create({ token, userId, role, userName });
       // console.log(`New FCM token saved for user ${userId}`);
     } else {
       // console.log(`FCM token already exists for user ${userId}`);

@@ -11,6 +11,10 @@ const fcmTokenSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    userName: {
+      type: String,
+      required: true,
+    },
     token: {
       type: String,
       required: true,
