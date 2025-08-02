@@ -3,6 +3,7 @@ const express = require("express");
 const connectDB = require("./database/db");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const axios = require("axios");
 const authRoutes = require("./routes/auth/auth-routes");
 const adminRestaurantRoutes = require("./routes/admin/restaurants-routes");
 const adminMenuItemsRoutes = require("./routes/admin/menu-routes");
@@ -37,6 +38,26 @@ app.use(
     credentials: true,
   })
 );
+
+const url = `https://api.delbite.com/`;
+const interval = 30000;
+
+function reloadWebsite() {
+  axios
+    .get(url)
+    .then((response) => {
+      console.log("website reloded");
+    })
+    .catch((error) => {
+      console.error(`Error : ${error.message}`);
+    });
+}
+
+setInterval(reloadWebsite, interval);
+
+app.get("/", (req, res) => {
+  res.send("hello Foodie, Welcome To Delbite");
+});
 
 app.use(cookieParser());
 app.use(express.json());
