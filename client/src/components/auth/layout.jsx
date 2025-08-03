@@ -10,11 +10,11 @@ const AuthLayout = () => {
 ">
         <div className="max-w-md space-y-6 text-center text-primary-foreground">
           {/* <h2 className="text-2xl font-bold text-gray-800">Call us to Place Your Order Today!! - 9515836496</h2> */}
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-extrabold bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 bg-clip-text text-transparent">
             Delicious Meals Delivered
           </h2>
           <p className="text-gray-600">
-            Get your favorite food at your doorstep!
+            Get your favorite food at your doorstep! 🚀📦
           </p>
 
           <img
@@ -31,7 +31,7 @@ const AuthLayout = () => {
             }}
           >
             {/* Call us to Place Your Order Today!! 9876543210 */}
-            Ring us today at 9515836496 and get your order on the way!
+            {/* Ring us today at 9515836496 and get your order on the way! */}
           </h2>
         </div>
       </div>
