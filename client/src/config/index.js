@@ -303,6 +303,11 @@ export const addressFormControls = [
     name: "phone",
     componentType: "input",
     type: "text",
+    // inputmode: "numeric",
+    // pattern:"\d{10}",
+    // maxlength:"10",
+    // minLength:"10",
+    title:"Enter Valid Phone Number",
     placeholder: "Enter your phone number",
   },
   {

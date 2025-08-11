@@ -231,7 +231,7 @@ const ShoppingListing = () => {
             </div>
           ) : userLocation && (
             <div className="p-2 text-sm text-green-700 bg-green-100 rounded mx-4 mt-2">
-              📍 Using Location: Lat {userLocation.latitude}, Lng {userLocation.longitude}
+              {/* 📍 Using Location: Lat {userLocation.latitude}, Lng {userLocation.longitude} */}
             </div>
           )}
 

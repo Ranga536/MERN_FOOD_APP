@@ -128,6 +128,11 @@ const AuthRegister = () => {
               onChange={(e) =>
                 setFormData({ ...formData, phone: e.target.value })
               }
+              inputmode="numeric"
+              pattern="\d{10}"
+              maxlength="10"
+              minLength="10"
+              title="Enter Valid Phone Number"
               placeholder="Phone"
               className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400"
               required
