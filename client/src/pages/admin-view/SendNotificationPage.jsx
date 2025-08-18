@@ -40,13 +40,13 @@ const SendNotificationPage = () => {
       <h2 className="text-2xl font-bold mb-4">Send Push Notification</h2>
       <input
         type="text"
-        className="border w-full mb-3 p-2 rounded"
+        className="border w-full mb-3 p-2 rounded-2xl"
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
       <textarea
-        className="border w-full mb-3 p-2 rounded"
+        className="border w-full mb-3 p-2 rounded-2xl"
         placeholder="Message body"
         value={body}
         onChange={(e) => setBody(e.target.value)}
@@ -54,11 +54,13 @@ const SendNotificationPage = () => {
       <button
         onClick={handleSend}
         disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        // className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        // className="cursor-pointer bg-blue-400 hover:bg-pink-600 text-white p-2 rounded-lg shadow-md transition-all duration-200"
+        className="cursor-pointer bg-gradient-to-r from-[#eb05ae] via-[#2575fc] to-[#00c9ff] hover:shadow-xl hover:scale-[1.02] text-white p-2 rounded-lg shadow-md transition-all duration-200"
       >
         {loading ? "Sending..." : "Send Notification"}
       </button>
-      {response && <p className="mt-4">{response}</p>}
+      {response && <p className="mt-4 text-red-500 italic">{response}</p>}
     </div>
   );
 };

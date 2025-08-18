@@ -31,12 +31,12 @@ const adminSidebarMenuItems = [
     path: "/admin/orders",
     icon: <ShoppingBag color="#e60f0f" />,
   },
-  // {
-  //   id: "admin-notifications",
-  //   label: "Notifications",
-  //   path: "/admin/notifications",
-  //   icon: <MessageCircleCode color="orange" />
-  // },
+  {
+    id: "admin-notifications",
+    label: "Notifications",
+    path: "/admin/notifications",
+    icon: <MessageCircleCode color="orange" />
+  },
 ];
 
 const MenuItems = ({ setOpen }) => {
@@ -51,7 +51,7 @@ const MenuItems = ({ setOpen }) => {
             navigate(menuItem.path);
             setOpen ? setOpen(false) : null;
           }}
-          className="flex cursor-pointer text-xl items-center gap-2 rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="flex cursor-pointer text-xl font-bold italic font-mono not-even: items-center gap-2 rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           {menuItem.icon}
           <span>{menuItem.label}</span>
@@ -72,8 +72,8 @@ const AdminSidebar = ({ open, setOpen }) => {
             <SheetHeader className="border-b">
               <SheetTitle className="flex gap-2 mt-5 mb-5">
                 {/* <ChartNoAxesCombined size={30} /> */}
-                <ShieldUser size={25} />
-                <h1 className="text-2xl font-extrabold ">Delbite-Admin</h1>
+                <ShieldUser size={28} color="red" />
+                <h1 className="text-xl font-extrabold ">Delbite-Admin</h1>
               </SheetTitle>
             </SheetHeader>
             <MenuItems setOpen={setOpen} />
@@ -87,8 +87,9 @@ const AdminSidebar = ({ open, setOpen }) => {
           className="flex cursor-pointer items-center gap-2"
         >
           {/* <ChartNoAxesCombined size={30} /> */}
-          <ShieldUser size={25} />
-          <h1 className="text-2xl font-extrabold">Delbite-Admin</h1>
+          <ShieldUser size={28} color="red" />
+          <h1 className="text-xl font-extrabold">Delbite-Admin</h1>
+          
         </div>
         <MenuItems />
       </aside>
