@@ -150,11 +150,11 @@ const SearchFoodItems = () => {
       )}
 
       {/* ✅ Show current location */}
-      {!isLocationLoading && userLocation && (
+      {/* {!isLocationLoading && userLocation && (
         <div className="text-sm text-green-700 text-center mb-4">
           📍 Using Location: {userLocation.latitude}, {userLocation.longitude}
         </div>
-      )}
+      )} */}
 
       {/* ✅ Results Area */}
       {!isLocationLoading && (

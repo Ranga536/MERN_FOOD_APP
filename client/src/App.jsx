@@ -31,6 +31,7 @@ import ResetPassword from "./pages/auth/resetPassword";
 import { Loader2, Loader2Icon } from "lucide-react";
 import ContactPage from "./pages/shopping-view/contact";
 import AdminNotificationsPage from "./pages/admin-view/SendNotificationPage";
+import Feedback from "./pages/shopping-view/feedback";
 // import gifImg from "./assets/deliverybike-giphy.gif"
 
 
@@ -109,11 +110,11 @@ function App() {
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
-          {/* <Route path="features" element={<AdminFeatures />} />
+          <Route path="features" element={<AdminFeatures />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="restaurants" element={<AdminRestaurants />} />
           <Route path="restaurants/:id" element={<AdminMenuItems />} />
-          <Route path="notifications" element={<AdminNotificationsPage />} /> */}
+          <Route path="notifications" element={<AdminNotificationsPage />} />
         </Route>
         <Route
           path="/shop"
@@ -124,13 +125,14 @@ function App() {
           }
         >
           <Route path="home" element={<ShoppingHome />} />
-          {/* <Route path="account" element={<ShoppingAccount />} />
+          <Route path="account" element={<ShoppingAccount />} />
           <Route path="listing" element={<ShoppingListing />} />
           <Route path="listing/:id" element={<UserMenuItems />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="order-success" element={<OrderSuccessPage />} />
           <Route path="contact" element={<ContactPage />} />
-          <Route path="search" element={<SearchFoodItems />} /> */}
+          <Route path="search" element={<SearchFoodItems />} />
+          <Route path="feedback" element={<Feedback />} />
         </Route>
         <Route path="/unauth-page" element={<UnauthPage />} />
         <Route path="*" element={<NotFound />} />

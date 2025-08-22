@@ -236,11 +236,11 @@ export const shoppingViewHeaderMenuItems = [
     label: "Contact",
     path: "/shop/contact",
   },
-  // {
-  //   id: "account",
-  //   label: "My Account",
-  //   path: "/shop/account",
-  // },
+  {
+    id: "support",
+    label: "Feedback",
+    path: "/shop/feedback",
+  },
 ];
 
 
