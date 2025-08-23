@@ -74,7 +74,7 @@ const ShoppingOrderDetailsView = ({ orderDetails }) => {
                 </p>
                 <p className="text-gray-600">Quantity: {item.quantity}</p>
                 <p className="text-gray-600">Item Price: ₹{item.offerPrice}</p>
-                <p className="text-gray-600">Delivery: ₹35</p>
+                <p className="text-gray-600">Delivery: ₹30</p>
                 <p className="text-gray-600">
                   Restaurant:{" "}
                   <span className="text-indigo-600">{item.restaurantName}</span>
