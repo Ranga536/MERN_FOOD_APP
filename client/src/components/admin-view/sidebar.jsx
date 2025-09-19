@@ -13,30 +13,30 @@ import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 
 const adminSidebarMenuItems = [
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    path: "/admin/dashboard",
-    icon: <LayoutDashboard color="#e60fd4" />,
-  },
-  {
-    id: "restaurants",
-    label: "Restaurants",
-    path: "/admin/restaurants",
-    icon: <Hotel color="#0fe6d8" />,
-  },
-  {
-    id: "orders",
-    label: "Orders",
-    path: "/admin/orders",
-    icon: <ShoppingBag color="#e60f0f" />,
-  },
-  {
-    id: "admin-notifications",
-    label: "Notifications",
-    path: "/admin/notifications",
-    icon: <MessageCircleCode color="orange" />
-  },
+  // {
+  //   id: "dashboard",
+  //   label: "Dashboard",
+  //   path: "/admin/dashboard",
+  //   icon: <LayoutDashboard color="#e60fd4" />,
+  // },
+  // {
+  //   id: "restaurants",
+  //   label: "Restaurants",
+  //   path: "/admin/restaurants",
+  //   icon: <Hotel color="#0fe6d8" />,
+  // },
+  // {
+  //   id: "orders",
+  //   label: "Orders",
+  //   path: "/admin/orders",
+  //   icon: <ShoppingBag color="#e60f0f" />,
+  // },
+  // {
+  //   id: "admin-notifications",
+  //   label: "Notifications",
+  //   path: "/admin/notifications",
+  //   icon: <MessageCircleCode color="orange" />
+  // },
 ];
 
 const MenuItems = ({ setOpen }) => {

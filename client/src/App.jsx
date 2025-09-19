@@ -101,7 +101,7 @@ function App() {
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password/:token" element={<ResetPassword />} />
         </Route>
-        <Route
+        {/* <Route
           path="/admin"
           element={
             <CheckAuth isAuthenticated={isAuthenticated} user={user}>
@@ -133,7 +133,7 @@ function App() {
           <Route path="contact" element={<ContactPage />} />
           <Route path="search" element={<SearchFoodItems />} />
           <Route path="feedback" element={<Feedback />} />
-        </Route>
+        </Route> */}
         <Route path="/unauth-page" element={<UnauthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
