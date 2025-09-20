@@ -125,100 +125,100 @@ const ShoppingHeader = () => {
   }, [dispatch, user?.id]);
 
   return (
-    // <header className="sticky top-0 z-40 w-full border-b bg-background">
-    //   <div className="flex h-16 items-center justify-between px-4 md:px-6">
-    //     <div className="flex items-center">
-    //       <Link to="/shop/home" className="flex items-center gap-2">
-    //         <img src={delbiteLogo} className="h-10 w-10" alt="Delbite Logo" />
-    //         <span className="font-bold">Delbite</span>
-    //       </Link>
-    //     </div>
+    <header className="sticky top-0 z-40 w-full border-b bg-background">
+      <div className="flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex items-center">
+          <Link to="/shop/home" className="flex items-center gap-2">
+            <img src={delbiteLogo} className="h-10 w-10" alt="Delbite Logo" />
+            <span className="font-bold">Delbite</span>
+          </Link>
+        </div>
 
-    //     <div className="hidden lg:flex flex-1 justify-center">
-    //       <MenuItems />
-    //     </div>
+        <div className="hidden lg:flex flex-1 justify-center">
+          <MenuItems />
+        </div>
 
-    //     <div className="flex items-center gap-4">
-    //       {/* Mobile Icons (Search + Cart) */}
-    //       <div className="flex items-center gap-2 ">
-    //         <Link
-    //           to="/shop/search"
-    //           className="cursor-pointer p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition"
-    //         >
-    //           <SearchIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-    //         </Link>
+        <div className="flex items-center gap-4">
+          {/* Mobile Icons (Search + Cart) */}
+          <div className="flex items-center gap-2 ">
+            <Link
+              to="/shop/search"
+              className="cursor-pointer p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition"
+            >
+              <SearchIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+            </Link>
 
-    //         <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
-    //           <Button
-    //             onClick={() => setOpenCartSheet(true)}
-    //             variant="outline"
-    //             size="icon"
-    //             className="relative lg:hidden"
-    //           >
-    //             <ShoppingCart className="w-6 h-6 cursor-pointer" />
-    //             <span className="absolute top-[-5px] right-[2px] font-bold text-sm rounded-full">
-    //               {cartItems?.items?.length || 0}
-    //             </span>
-    //             <span className="sr-only">user cart</span>
-    //           </Button>
-    //           <UserCartWrapper
-    //             setOpenCartSheet={setOpenCartSheet}
-    //             cartItems={
-    //               cartItems?.items && cartItems.items.length > 0
-    //                 ? cartItems.items
-    //                 : []
-    //             }
-    //           />
-    //         </Sheet>
-    //       </div>
+            <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
+              <Button
+                onClick={() => setOpenCartSheet(true)}
+                variant="outline"
+                size="icon"
+                className="relative lg:hidden"
+              >
+                <ShoppingCart className="w-6 h-6 cursor-pointer" />
+                <span className="absolute top-[-5px] right-[2px] font-bold text-sm rounded-full">
+                  {cartItems?.items?.length || 0}
+                </span>
+                <span className="sr-only">user cart</span>
+              </Button>
+              <UserCartWrapper
+                setOpenCartSheet={setOpenCartSheet}
+                cartItems={
+                  cartItems?.items && cartItems.items.length > 0
+                    ? cartItems.items
+                    : []
+                }
+              />
+            </Sheet>
+          </div>
 
-    //       {/* Mobile Sheet for Menu (no cart inside) */}
-    //       <div className="lg:hidden">
-    //         <Sheet open={openSheet} onOpenChange={setOpenSheet}>
-    //           <SheetTrigger asChild>
-    //             <Button variant="outline" size="icon">
-    //               <Menu className="h-6 w-6" />
-    //               <span className="sr-only">Toggle Header Menu</span>
-    //             </Button>
-    //           </SheetTrigger>
-    //           <SheetContent side="left" className="w-full max-w-xs">
-    //             <MenuItems setOpenSheet={setOpenSheet} />
-    //             {/* Removed Cart Icon from here */}
-    //             <HeaderRightContent setOpenSheet={setOpenSheet} />
-    //           </SheetContent>
-    //         </Sheet>
-    //       </div>
+          {/* Mobile Sheet for Menu (no cart inside) */}
+          <div className="lg:hidden">
+            <Sheet open={openSheet} onOpenChange={setOpenSheet}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Toggle Header Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-full max-w-xs">
+                <MenuItems setOpenSheet={setOpenSheet} />
+                {/* Removed Cart Icon from here */}
+                <HeaderRightContent setOpenSheet={setOpenSheet} />
+              </SheetContent>
+            </Sheet>
+          </div>
 
-    //       {/* Desktop Right Content (Cart + Avatar) */}
-    //       <div className="hidden lg:flex items-center gap-4">
-    //         <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
-    //           <Button
-    //             onClick={() => setOpenCartSheet(true)}
-    //             variant="outline"
-    //             size="icon"
-    //             className="relative"
-    //           >
-    //             <ShoppingCart className="w-6 h-6 cursor-pointer" />
-    //             <span className="absolute top-[-5px] right-[2px] font-bold text-sm rounded-full">
-    //               {cartItems?.items?.length || 0}
-    //             </span>
-    //             <span className="sr-only">user cart</span>
-    //           </Button>
-    //           <UserCartWrapper
-    //             setOpenCartSheet={setOpenCartSheet}
-    //             cartItems={
-    //               cartItems?.items && cartItems.items.length > 0
-    //                 ? cartItems.items
-    //                 : []
-    //             }
-    //           />
-    //         </Sheet>
-    //         <HeaderRightContent />
-    //       </div>
-    //     </div>
-    //   </div>
-    // </header>
-    <header></header>
+          {/* Desktop Right Content (Cart + Avatar) */}
+          <div className="hidden lg:flex items-center gap-4">
+            <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
+              <Button
+                onClick={() => setOpenCartSheet(true)}
+                variant="outline"
+                size="icon"
+                className="relative"
+              >
+                <ShoppingCart className="w-6 h-6 cursor-pointer" />
+                <span className="absolute top-[-5px] right-[2px] font-bold text-sm rounded-full">
+                  {cartItems?.items?.length || 0}
+                </span>
+                <span className="sr-only">user cart</span>
+              </Button>
+              <UserCartWrapper
+                setOpenCartSheet={setOpenCartSheet}
+                cartItems={
+                  cartItems?.items && cartItems.items.length > 0
+                    ? cartItems.items
+                    : []
+                }
+              />
+            </Sheet>
+            <HeaderRightContent />
+          </div>
+        </div>
+      </div>
+    </header>
+    // <header></header>
   );
 };
 

@@ -101,7 +101,7 @@ function App() {
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password/:token" element={<ResetPassword />} />
         </Route>
-        {/* <Route
+        <Route
           path="/admin"
           element={
             <CheckAuth isAuthenticated={isAuthenticated} user={user}>
@@ -115,7 +115,7 @@ function App() {
           <Route path="restaurants" element={<AdminRestaurants />} />
           <Route path="restaurants/:id" element={<AdminMenuItems />} />
           <Route path="notifications" element={<AdminNotificationsPage />} />
-        </Route> */}
+        </Route>
         <Route
           path="/shop"
           element={
@@ -125,14 +125,14 @@ function App() {
           }
         >
           <Route path="home" element={<ShoppingHome />} />
-          {/* <Route path="account" element={<ShoppingAccount />} />
+          <Route path="account" element={<ShoppingAccount />} />
           <Route path="listing" element={<ShoppingListing />} />
           <Route path="listing/:id" element={<UserMenuItems />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="order-success" element={<OrderSuccessPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="search" element={<SearchFoodItems />} />
-          <Route path="feedback" element={<Feedback />} /> */}
+          <Route path="feedback" element={<Feedback />} />
         </Route>
         <Route path="/unauth-page" element={<UnauthPage />} />
         <Route path="*" element={<NotFound />} />
