@@ -528,7 +528,7 @@ className="w-75 h-auto max-w-2xl mx-auto rounded-lg shadow-lg mb-5"
 //       </button>
 //     </main>
 
-//   );
-// };
+  );
+};
 
 export default ShoppingHome;
