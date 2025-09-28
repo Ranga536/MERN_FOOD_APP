@@ -115,6 +115,13 @@ function App() {
           <Route path="restaurants" element={<AdminRestaurants />} />
           <Route path="restaurants/:id" element={<AdminMenuItems />} />
           <Route path="notifications" element={<AdminNotificationsPage />} /> */}
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="features" element={<AdminDashboard />} />
+          <Route path="orders" element={<AdminDashboard />} />
+          <Route path="restaurants" element={<AdminDashboard />} />
+          <Route path="restaurants/:id" element={<AdminDashboard />} />
+          <Route path="notifications" element={<AdminDashboard />} />
+          <Route path="ssmb" element={<AdminOrders />} />
         </Route>
         <Route
           path="/shop"
@@ -125,14 +132,14 @@ function App() {
           }
         >
           <Route path="home" element={<ShoppingHome />} />
-          {/* <Route path="account" element={<ShoppingAccount />} />
+          <Route path="account" element={<ShoppingAccount />} />
           <Route path="listing" element={<ShoppingListing />} />
           <Route path="listing/:id" element={<UserMenuItems />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="order-success" element={<OrderSuccessPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="search" element={<SearchFoodItems />} />
-          <Route path="feedback" element={<Feedback />} /> */}
+          <Route path="feedback" element={<Feedback />} />
         </Route>
         <Route path="/unauth-page" element={<UnauthPage />} />
         <Route path="*" element={<NotFound />} />
