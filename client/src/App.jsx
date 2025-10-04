@@ -109,19 +109,19 @@ function App() {
             </CheckAuth>
           }
         >
-          {/* <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="features" element={<AdminFeatures />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="restaurants" element={<AdminRestaurants />} />
           <Route path="restaurants/:id" element={<AdminMenuItems />} />
-          <Route path="notifications" element={<AdminNotificationsPage />} /> */}
-          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="notifications" element={<AdminNotificationsPage />} />
+          {/* <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="features" element={<AdminDashboard />} />
           <Route path="orders" element={<AdminDashboard />} />
           <Route path="restaurants" element={<AdminDashboard />} />
           <Route path="restaurants/:id" element={<AdminDashboard />} />
           <Route path="notifications" element={<AdminDashboard />} />
-          <Route path="ssmb" element={<AdminOrders />} />
+          <Route path="ssmb" element={<AdminOrders />} /> */}
         </Route>
         <Route
           path="/shop"

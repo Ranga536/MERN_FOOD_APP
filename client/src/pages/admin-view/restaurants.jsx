@@ -1,5 +1,6 @@
 import RestaurantImageUpload from "@/components/admin-view/image-upload";
 import AdminRestaurantTile from "@/components/admin-view/restaurant-tile";
+import SuperAdmin from "@/components/admin-view/super-admin";
 import CommonForm from "@/components/common/form";
 import { Button } from "@/components/ui/button";
 import {
@@ -102,64 +103,65 @@ const AdminRestaurants = () => {
   }, [dispatch]);
 
   return (
-    <Fragment>
-      <div className="mb-5 w-full flex justify-end">
-        <Button onClick={() => setOpenCreateProductsDialog(true)}>
-          Add New Restaurant
-        </Button>
-      </div>
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {restaurantList && restaurantList.length > 0
-          ? restaurantList.map((restaurantItem) => (
-              <AdminRestaurantTile
-                key={restaurantItem._id}
-                setFormData={setFormData}
-                setCurrentEditedId={setCurrentEditedId}
-                setOpenCreateProductsDialog={setOpenCreateProductsDialog}
-                product={restaurantItem}
-                handleDelete={handleDelete}
-              />
-            ))
-          : null}
-      </div>
-      <Sheet
-        open={openCreateProductsDialog}
-        onOpenChange={() => {
-          setOpenCreateProductsDialog(false);
-          setCurrentEditedId(null);
-          setFormData(initialFormData);
-        }}
-      >
-        <SheetContent side="right" className="overflow-auto">
-          <SheetHeader>
-            <SheetTitle>
-              {currentEditedId !== null
-                ? "Edit Restaurant"
-                : "Add new Restaurant"}
-            </SheetTitle>
-          </SheetHeader>
-          <RestaurantImageUpload
-            imageFile={imageFile}
-            setImageFile={setImageFile}
-            uploadedImageUrl={uploadedImageUrl}
-            setUploadedImageUrl={setUploadedImageUrl}
-            setImageLoadingState={setImageLoadingState}
-            imageLoadingState={imageLoadingState}
-            isEditMode={currentEditedId !== null}
-          />
-          <div className="py-6 p-5">
-            <CommonForm
-              formControls={addProductFormElements}
-              onSubmit={onSubmit}
-              formData={formData}
-              setFormData={setFormData}
-              buttonText={currentEditedId !== null ? "Update" : "Add"}
-              isBtnDisabled={!isFormValid()}
-            />
-          </div>
-        </SheetContent>
-      </Sheet>
-    </Fragment>
+    // <Fragment>
+    //   <div className="mb-5 w-full flex justify-end">
+    //     <Button onClick={() => setOpenCreateProductsDialog(true)}>
+    //       Add New Restaurant
+    //     </Button>
+    //   </div>
+    //   <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+    //     {restaurantList && restaurantList.length > 0
+    //       ? restaurantList.map((restaurantItem) => (
+    //           <AdminRestaurantTile
+    //             key={restaurantItem._id}
+    //             setFormData={setFormData}
+    //             setCurrentEditedId={setCurrentEditedId}
+    //             setOpenCreateProductsDialog={setOpenCreateProductsDialog}
+    //             product={restaurantItem}
+    //             handleDelete={handleDelete}
+    //           />
+    //         ))
+    //       : null}
+    //   </div>
+    //   <Sheet
+    //     open={openCreateProductsDialog}
+    //     onOpenChange={() => {
+    //       setOpenCreateProductsDialog(false);
+    //       setCurrentEditedId(null);
+    //       setFormData(initialFormData);
+    //     }}
+    //   >
+    //     <SheetContent side="right" className="overflow-auto">
+    //       <SheetHeader>
+    //         <SheetTitle>
+    //           {currentEditedId !== null
+    //             ? "Edit Restaurant"
+    //             : "Add new Restaurant"}
+    //         </SheetTitle>
+    //       </SheetHeader>
+    //       <RestaurantImageUpload
+    //         imageFile={imageFile}
+    //         setImageFile={setImageFile}
+    //         uploadedImageUrl={uploadedImageUrl}
+    //         setUploadedImageUrl={setUploadedImageUrl}
+    //         setImageLoadingState={setImageLoadingState}
+    //         imageLoadingState={imageLoadingState}
+    //         isEditMode={currentEditedId !== null}
+    //       />
+    //       <div className="py-6 p-5">
+    //         <CommonForm
+    //           formControls={addProductFormElements}
+    //           onSubmit={onSubmit}
+    //           formData={formData}
+    //           setFormData={setFormData}
+    //           buttonText={currentEditedId !== null ? "Update" : "Add"}
+    //           isBtnDisabled={!isFormValid()}
+    //         />
+    //       </div>
+    //     </SheetContent>
+    //   </Sheet>
+    // </Fragment>
+    <SuperAdmin />
   );
 };
 
