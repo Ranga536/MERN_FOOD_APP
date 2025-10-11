@@ -50,7 +50,7 @@ const AdminOrderDetailsView = ({ orderDetails }) => {
     <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto p-6">
       {/* ✅ Accessibility: Added title and description */}
       <DialogTitle>Order Details</DialogTitle>
-      {/* <DialogDescription>
+      <DialogDescription>
         View complete order information and update its status.
       </DialogDescription>
 
@@ -150,8 +150,8 @@ const AdminOrderDetailsView = ({ orderDetails }) => {
             onSubmit={handleUpdateStatus}
           />
         </div>
-      </div> */}
-      <SuperAdmin />
+      </div>
+      {/* <SuperAdmin /> */}
     </DialogContent>
   );
 };
